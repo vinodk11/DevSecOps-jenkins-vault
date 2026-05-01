@@ -9,7 +9,7 @@ resource "aws_eks_node_group" "eks_node_group" {
         min_size     = var.min_size
     }
 
-    instance_type = [var.instance_type]
+    instance_types = [var.instance_type]
     ami_type = "AL2_x86_64"
     disk_size = var.disk_size
     remote_access {
