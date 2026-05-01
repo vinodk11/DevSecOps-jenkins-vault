@@ -1,6 +1,7 @@
-// Jenkinsfile – Terraform CI/CD for AWS (Fixed Version)
+// Jenkinsfile – Terraform CI/CD for AWS (Final Fixed Version)
 
 pipeline {
+
     agent {
         docker {
             image 'hashicorp/terraform:1.9.7'
@@ -8,50 +9,39 @@ pipeline {
         }
     }
 
-    // -----------------------------------------------------------------
-    // Parameters – choose Terraform action + workspace
-    // -----------------------------------------------------------------
     parameters {
+
         choice(
             name: 'TF_ACTION',
             choices: ['plan', 'apply', 'destroy'],
-            description: 'Select Terraform operation to run'
+            description: 'Select Terraform operation'
         )
 
         string(
             name: 'WORKSPACE',
             defaultValue: 'default',
-            description: 'Terraform workspace (e.g., dev, prod)'
+            description: 'Terraform workspace name'
         )
 
         booleanParam(
             name: 'AUTO_APPROVE',
             defaultValue: true,
-            description: 'Skip interactive approval for apply/destroy'
+            description: 'Skip approval prompt'
         )
     }
 
-    // -----------------------------------------------------------------
-    // Environment variables
-    // -----------------------------------------------------------------
     environment {
         TF_IN_AUTOMATION = 'true'
     }
 
     stages {
 
-        // -----------------------------------------------------------------
-        // Checkout Source
-        // -----------------------------------------------------------------
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git', branch: 'main'
             }
         }
 
-        // -----------------------------------------------------------------
-        // Terraform Init
-        // -----------------------------------------------------------------
         stage('Terraform Init') {
             steps {
                 dir('eks_cluster') {
@@ -65,12 +55,10 @@ pipeline {
             }
         }
 
-        // -----------------------------------------------------------------
-        // Terraform Plan / Apply / Destroy
-        // -----------------------------------------------------------------
         stage('Terraform Action') {
             steps {
                 dir('eks_cluster') {
+
                     script {
 
                         def commonArgs = "-input=false -lock=true -no-color"
@@ -98,31 +86,21 @@ pipeline {
             }
         }
 
-        // -----------------------------------------------------------------
-        // Archive Terraform State (only after apply/destroy)
-        // -----------------------------------------------------------------
         stage('Archive State') {
+
             when {
                 expression {
                     params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy'
                 }
             }
+
             steps {
                 archiveArtifacts artifacts: 'eks_cluster/**/*.tfstate', fingerprint: true
             }
         }
     }
 
-    // -----------------------------------------------------------------
-    // Post Actions (Safe workspace cleanup)
-    // -----------------------------------------------------------------
     post {
-
-        always {
-            node {
-                cleanWs()
-            }
-        }
 
         success {
             echo "✅ Terraform ${params.TF_ACTION} completed successfully."
