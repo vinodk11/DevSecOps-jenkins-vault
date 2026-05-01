@@ -52,13 +52,15 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh '''
-                # Select / create the workspace
-                terraform workspace select "${WORKSPACE}" || terraform workspace new "${WORKSPACE}"
+                dir('eks_cluster') {
+                    sh '''
+                    # Select / create the workspace
+                    terraform workspace select "${WORKSPACE}" || terraform workspace new "${WORKSPACE}"
 
-                # Initialize providers and backends
-                terraform init -input=false
-                '''
+                    # Initialize providers and backends
+                    terraform init -input=false
+                    '''
+                }
             }
         }
 
