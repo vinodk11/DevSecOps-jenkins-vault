@@ -53,16 +53,17 @@ pipeline {
             steps {
                 dir('eks_cluster') {
                     sh '''                                                                                                              
-                      # Initialise the remote‑state backend (reconfigure in case of changes)                                          
-                      terraform -chdir=eks_cluster init -input=false -reconfigure                                                     
+                        # Initialise the remote‑state backend (reconfigure in case of changes)                                                  
+                        terraform -chdir=eks_cluster init -input=false -reconfigure                                                             
                                                                                                                                       
-                      # Select or create the workspace now that the backend is ready                                                  
-                      terraform -chdir=eks_cluster workspace select "${WORKSPACE}" \
-                          || terraform -chdir=eks_cluster workspace new "${WORKSPACE}"                                                
+                        # Select or create the workspace now that the backend is ready                                                          
+                        terraform -chdir=eks_cluster workspace select "${WORKSPACE}" \
+                            || terraform -chdir=eks_cluster workspace new "${WORKSPACE}"                                               
                   '''           
                 }
             }
         }
+
 
         stage('Terraform Action') {
             steps {
