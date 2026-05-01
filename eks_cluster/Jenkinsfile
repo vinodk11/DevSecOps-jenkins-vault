@@ -1,4 +1,5 @@
-// Jenkinsfile – Terraform CI/CD for AWS
+// Jenkinsfile – Terraform CI/CD for AWS (Fixed)
+
 pipeline {
     agent {
         docker {
@@ -6,9 +7,9 @@ pipeline {
             args '--entrypoint="" -u root:root'
         }
     }
+
     // -----------------------------------------------------------------
-    // Parameters – choose the Terraform action and optionally provide
-    // a workspace name (useful for multiple environments)
+    // Parameters
     // -----------------------------------------------------------------
     parameters {
         choice(
@@ -16,34 +17,34 @@ pipeline {
             choices: ['plan', 'apply', 'destroy'],
             description: 'Select Terraform operation to run'
         )
+
         string(
             name: 'WORKSPACE',
             defaultValue: 'default',
             description: 'Terraform workspace (e.g., dev, prod)'
         )
-        // Optional variables that can be overridden at build time
+
         booleanParam(
             name: 'AUTO_APPROVE',
             defaultValue: true,
-            description: 'Skip interactive approval for apply/destroy'
+            description: 'Skip approval prompt for apply/destroy'
         )
     }
 
     // -----------------------------------------------------------------
-    // Environment – AWS credentials must be supplied by Jenkins
-    // (e.g., via "AWS Credentials" plugin or injected env vars)
+    // Environment Variables
     // -----------------------------------------------------------------
     environment {
-        // Expected to be configured as credentials in Jenkins:
-        //   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
-        // If you use the "AWS Credentials" binding, Jenkins will expose them.
         TF_IN_AUTOMATION = 'true'
     }
 
+    // -----------------------------------------------------------------
+    // Pipeline Stages
+    // -----------------------------------------------------------------
     stages {
+
         stage('Checkout') {
             steps {
-                // Assumes Jenkinsfile lives in the same repo as Terraform code
                 git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git', branch: 'main'
             }
         }
@@ -52,11 +53,10 @@ pipeline {
             steps {
                 dir('eks_cluster') {
                     sh '''
-                    # Select / create the workspace
-                    terraform workspace select "${WORKSPACE}" || terraform workspace new "${WORKSPACE}"
+                        terraform workspace select "${WORKSPACE}" \
+                        || terraform workspace new "${WORKSPACE}"
 
-                    # Initialize providers and backends
-                    terraform init -input=false
+                        terraform init -input=false
                     '''
                 }
             }
@@ -64,35 +64,39 @@ pipeline {
 
         stage('Terraform Action') {
             steps {
-                script {
-                    // Build the common arguments
-                    def commonArgs = "-input=false -lock=true -no-color"
+                dir('eks_cluster') {
+                    script {
 
-                    // Append -auto-approve when requested
-                    def approveFlag = params.AUTO_APPROVE ? "-auto-approve" : ""
+                        def commonArgs = "-input=false -lock=true -no-color"
+                        def approveFlag = params.AUTO_APPROVE ? "-auto-approve" : ""
 
-                    // Choose the command based on the selected action
-                    if (params.TF_ACTION == 'plan') {
-                        sh "terraform plan ${commonArgs}"
-                    } else if (params.TF_ACTION == 'apply') {
-                        sh "terraform apply ${commonArgs} ${approveFlag}"
-                    } else if (params.TF_ACTION == 'destroy') {
-                        sh "terraform destroy ${commonArgs} ${approveFlag}"
-                    } else {
-                        error "Unsupported TF_ACTION: ${params.TF_ACTION}"
+                        if (params.TF_ACTION == 'plan') {
+
+                            sh "terraform plan ${commonArgs}"
+
+                        } else if (params.TF_ACTION == 'apply') {
+
+                            sh "terraform apply ${commonArgs} ${approveFlag}"
+
+                        } else if (params.TF_ACTION == 'destroy') {
+
+                            sh "terraform destroy ${commonArgs} ${approveFlag}"
+
+                        } else {
+
+                            error "Unsupported TF_ACTION: ${params.TF_ACTION}"
+
+                        }
                     }
                 }
             }
         }
 
-        
-    }
-        // Cleanup stage to archive state and clean workspace
         stage('Cleanup') {
             steps {
                 script {
                     if (params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy') {
-                        archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true
+                        archiveArtifacts artifacts: 'eks_cluster/**/*.tfstate', fingerprint: true
                     }
                 }
                 cleanWs()
@@ -101,17 +105,16 @@ pipeline {
     }
 
     // -----------------------------------------------------------------
-    // Notifications – adjust to your preferred channel (email, Slack, etc.)
+    // Notifications
     // -----------------------------------------------------------------
     post {
-        always {
-            // No workspace cleanup here; handled in dedicated Cleanup stage.
-        }
+
         success {
             echo "✅ Terraform ${params.TF_ACTION} completed successfully."
         }
+
         failure {
             echo "❌ Terraform ${params.TF_ACTION} failed."
         }
     }
-
+}
