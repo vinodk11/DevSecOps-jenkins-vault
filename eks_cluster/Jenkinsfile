@@ -87,16 +87,23 @@ pipeline {
             }
         }
 
-        stage('Post-actions') {
-            when {
-                expression { params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy' }
-            }
-            steps {
-                // Example: publish Terraform state as an artifact
-                archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true
-            }
-        }
-    }
+
+        // -----------------------------------------------------------------                                                        
+          // Cleanup – archive state (apply/destroy) and clean workspace                                                              
+          // -----------------------------------------------------------------                                                        
+          stage('Cleanup') {                                                                                                          
+              steps {                                                                                                                 
+                  script {                                                                                                            
+                      if (params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy') {                                             
+                          archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true                                               
+                      }                                                                                                               
+                  }                                                                                                                   
+                  cleanWs()                                                                                                           
+              }                                                                                                                       
+          }                                                                                                                           
+      }                              
+
+   
 
     // -----------------------------------------------------------------
     // Notifications – adjust to your preferred channel (email, Slack, etc.)
