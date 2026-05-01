@@ -1,0 +1,113 @@
+// Jenkinsfile – Terraform CI/CD for AWS
+pipeline {
+    agent {
+        // Use the official Terraform Docker image (includes AWS CLI)
+        docker {
+            image 'hashicorp/terraform:1.9.7'
+            args '-u root:root'   // run as root so we can mount files
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Parameters – choose the Terraform action and optionally provide
+    // a workspace name (useful for multiple environments)
+    // -----------------------------------------------------------------
+    parameters {
+        choice(
+            name: 'TF_ACTION',
+            choices: ['plan', 'apply', 'destroy'],
+            description: 'Select Terraform operation to run'
+        )
+        string(
+            name: 'WORKSPACE',
+            defaultValue: 'default',
+            description: 'Terraform workspace (e.g., dev, prod)'
+        )
+        // Optional variables that can be overridden at build time
+        booleanParam(
+            name: 'AUTO_APPROVE',
+            defaultValue: true,
+            description: 'Skip interactive approval for apply/destroy'
+        )
+    }
+
+    // -----------------------------------------------------------------
+    // Environment – AWS credentials must be supplied by Jenkins
+    // (e.g., via "AWS Credentials" plugin or injected env vars)
+    // -----------------------------------------------------------------
+    environment {
+        // Expected to be configured as credentials in Jenkins:
+        //   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
+        // If you use the "AWS Credentials" binding, Jenkins will expose them.
+        TF_IN_AUTOMATION = 'true'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Assumes Jenkinsfile lives in the same repo as Terraform code
+                checkout scm
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh '''
+                # Select / create the workspace
+                terraform workspace select "${WORKSPACE}" || terraform workspace new "${WORKSPACE}"
+
+                # Initialize providers and backends
+                terraform init -input=false
+                '''
+            }
+        }
+
+        stage('Terraform Action') {
+            steps {
+                script {
+                    // Build the common arguments
+                    def commonArgs = "-input=false -lock=true -no-color"
+
+                    // Append -auto-approve when requested
+                    def approveFlag = params.AUTO_APPROVE ? "-auto-approve" : ""
+
+                    // Choose the command based on the selected action
+                    if (params.TF_ACTION == 'plan') {
+                        sh "terraform plan ${commonArgs}"
+                    } else if (params.TF_ACTION == 'apply') {
+                        sh "terraform apply ${commonArgs} ${approveFlag}"
+                    } else if (params.TF_ACTION == 'destroy') {
+                        sh "terraform destroy ${commonArgs} ${approveFlag}"
+                    } else {
+                        error "Unsupported TF_ACTION: ${params.TF_ACTION}"
+                    }
+                }
+            }
+        }
+
+        stage('Post-actions') {
+            when {
+                expression { params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy' }
+            }
+            steps {
+                // Example: publish Terraform state as an artifact
+                archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Notifications – adjust to your preferred channel (email, Slack, etc.)
+    // -----------------------------------------------------------------
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo "✅ Terraform ${params.TF_ACTION} completed successfully."
+        }
+        failure {
+            echo "❌ Terraform ${params.TF_ACTION} failed."
+        }
+    }
+}
