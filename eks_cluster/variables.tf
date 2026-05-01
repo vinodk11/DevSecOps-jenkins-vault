@@ -53,27 +53,3 @@ variable "max_size" {
   type        = number
   default     = 5
 }
-
-# Disk size (GiB) for worker nodes
-variable "disk_size" {
-  description = "Root disk size (GiB) for each worker node."
-  type        = number
-  default     = 30
-}
-
-# Scaling configuration for the node group
-variable "desired_size" {
-  description = "Desired number of worker nodes."
-  type        = number
-  default     = 2
-}
-variable "min_size" {
-  description = "Minimum number of worker nodes."
-  type        = number
-  default     = 1
-}
-variable "max_size" {
-  description = "Maximum number of worker nodes."
-  type        = number
-  default     = 3
-}
