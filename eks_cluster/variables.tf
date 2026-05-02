@@ -15,11 +15,12 @@ variable "subnet_ids" {
   description = "Subnet IDs for the EKS cluster VPC."
   type        = list(string)
   default = [
-    "subnet-04d3040675d19eb5c",
-    "subnet-0558e34ee21f1c2f8",
-    "subnet-05c8feea6185ddaad",
-    "subnet-0b6b54dea4cc7b794",
-    "subnet-0d1847bf244ba7d46"
+     "subnet-09b776ddd0e3df31e",
+    "subnet-04f146e9df890e9d4",
+    "subnet-0c88fddb536cf0d7f",
+    "subnet-0e3daac08f57e1830",
+    "subnet-08169c980b22b36ca"
+    "subnet-06a234fead00ffeaf"
   ]
 }
 
