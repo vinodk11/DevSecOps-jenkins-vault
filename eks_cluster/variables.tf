@@ -15,14 +15,14 @@ variable "subnet_ids" {
   description = "Subnet IDs for the EKS cluster VPC."
   type        = list(string)
   default = [
-     "subnet-09b776ddd0e3df31e",
+    "subnet-09b776ddd0e3df31e",
     "subnet-04f146e9df890e9d4",
     "subnet-0c88fddb536cf0d7f",
     "subnet-0e3daac08f57e1830",
-    "subnet-08169c980b22b36ca"
+    "subnet-08169c980b22b36ca",
     "subnet-06a234fead00ffeaf"
   ]
-}
+}s
 
 # Node group instance type
 variable "instance_type" {
