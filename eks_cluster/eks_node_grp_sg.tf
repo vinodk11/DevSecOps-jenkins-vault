@@ -1,7 +1,7 @@
 resource "aws_security_group" "eks_node" {
     name = "eks_node_grp_sg"
     description = "allows all traffic"
-    vpc_id = "vpc-08f1e3fe715d5e9f3"
+    vpc_id = var.vpc_id 
     ingress {
         description = "allows all traffic"
         from_port = 0
@@ -20,10 +20,10 @@ resource "aws_security_group" "eks_node" {
   
 }  
 
- resource "aws_security_group" "eks_remote_access" {
+resource "aws_security_group" "eks_remote_access" {
     name        = "eks-remote-access-sg"
     description = "Security group for EKS worker node remote access"
-    vpc_id      = "vpc-08f1e3fe715d5e9f3"
+    vpc_id      = var.vpc_id
     
     ingress {
         from_port   = 22

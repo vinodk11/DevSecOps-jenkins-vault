@@ -54,3 +54,9 @@ variable "max_size" {
   type        = number
   default     = 5
 }
+
+variable "vpc_id" {
+  description = "The ID of the VPC where the EKS cluster and SGs will be created."
+  type        = string
+  default = "vpc-0d7dfc3c42d0f39c0"
+}

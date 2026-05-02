@@ -1,7 +1,7 @@
 resource "aws_iam_role" "ebs_csi_role" {
     name = "ebs-csi-role"
     assume_role_policy = jsonencode({
-        version = "2012-10-17"
+        Version = "2012-10-17"
         Statement = [
             {
                 effect = "Allow"
