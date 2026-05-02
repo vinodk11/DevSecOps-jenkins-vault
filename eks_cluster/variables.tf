@@ -22,7 +22,7 @@ variable "subnet_ids" {
     "subnet-08169c980b22b36ca",
     "subnet-06a234fead00ffeaf"
   ]
-}s
+}
 
 # Node group instance type
 variable "instance_type" {
