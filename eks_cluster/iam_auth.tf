@@ -6,10 +6,6 @@ resource "kubernetes_config_map_v1_data" "aws_auth" {
 
   data = {
     mapRoles = <<EOF
-- rolearn: ${aws_iam_role.eks_admin_role.arn}
-  username: eks-admin
-  groups:
-    - system:masters
 - rolearn: ${aws_iam_role.ebs_csi_role.arn}
   username: ebs-csi
   groups:
