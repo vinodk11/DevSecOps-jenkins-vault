@@ -59,3 +59,10 @@ variable "vpc_id" {
   type        = string
   default = "vpc-0d7dfc3c42d0f39c0"
 }
+
+variable "key_pair_name" {
+  description = "key pair name"
+  type = string
+  default = "terraform_new"
+  
+}
