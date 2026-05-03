@@ -13,7 +13,7 @@ resource "aws_eks_node_group" "eks_node_group" {
     ami_type = "AL2_x86_64"
     disk_size = var.disk_size
     remote_access {
-        ec2_ssh_key = "terraform"
+        ec2_ssh_key = var.key_pair_name
         
     }
     tags = {
