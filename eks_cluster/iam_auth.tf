@@ -25,20 +25,8 @@ resource "kubernetes_config_map_v1" "aws_auth" {
 
 provider "kubernetes" {
   host                   = aws_eks_cluster.my_eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.my_eks_cluster.certificate_authority[0].data)
-
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "/usr/bin/aws"   # 👈 FULL PATH
-    args        = [
-      "eks",
-      "get-token",
-      "--cluster-name",
-      aws_eks_cluster.my_eks_cluster.name
-    ]
-
-     env = {
-      AWS_REGION = "us-east-1"   # 👈 IMPORTANT (set your region)
-    }
-  }
+  cluster_ca_certificate = base64decode(
+    aws_eks_cluster.my_eks_cluster.certificate_authority[0].data
+  )
+  token = data.aws_eks_cluster_auth.cluster.token
 }
