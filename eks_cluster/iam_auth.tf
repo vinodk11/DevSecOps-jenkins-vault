@@ -19,5 +19,12 @@ resource "kubernetes_config_map_v1" "aws_auth" {
     ])
   }
 
-  depends_on = [aws_eks_node_group.eks_node_group]
+  depends_on = [aws_eks_node_group.eks_node_group, aws_eks_node_group.node_group]
+}
+
+
+provider "kubernetes" {
+  host                   = aws_eks_cluster.my_eks_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.my_eks_cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 }
