@@ -53,11 +53,14 @@ pipeline {
             steps {
                 dir('eks_cluster') {
                     sh '''
+                        # FIRST initialize backend (mandatory for S3)
+                        terraform init -input=false -reconfigure
+
+                        # THEN select or create workspace
                         terraform workspace select "${WORKSPACE}" \
                         || terraform workspace new "${WORKSPACE}"
+                    '''    
 
-                        terraform init -input=false
-                    '''
                 }
             }
         }
