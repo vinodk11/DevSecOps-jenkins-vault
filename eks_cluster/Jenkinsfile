@@ -1,46 +1,33 @@
-// Jenkinsfile – Terraform CI/CD for AWS (Fixed)
-
 pipeline {
     agent {
-        docker {
+        dockerContainer {
             image 'hashicorp/terraform:1.9.7'
             args '--entrypoint="" -u root:root'
         }
     }
 
-    // -----------------------------------------------------------------
-    // Parameters
-    // -----------------------------------------------------------------
     parameters {
         choice(
             name: 'TF_ACTION',
             choices: ['plan', 'apply', 'destroy'],
             description: 'Select Terraform operation to run'
         )
-
         string(
             name: 'WORKSPACE',
             defaultValue: 'default',
-            description: 'Terraform workspace (e.g., dev, prod)'
+            description: 'Terraform workspace'
         )
-
         booleanParam(
             name: 'AUTO_APPROVE',
             defaultValue: true,
-            description: 'Skip approval prompt for apply/destroy'
+            description: 'Skip approval prompt'
         )
     }
 
-    // -----------------------------------------------------------------
-    // Environment Variables
-    // -----------------------------------------------------------------
     environment {
         TF_IN_AUTOMATION = 'true'
     }
 
-    // -----------------------------------------------------------------
-    // Pipeline Stages
-    // -----------------------------------------------------------------
     stages {
 
         stage('Checkout') {
@@ -53,10 +40,10 @@ pipeline {
             steps {
                 dir('eks_cluster') {
                     sh '''
+                        terraform init -input=false -reconfigure
+
                         terraform workspace select "${WORKSPACE}" \
                         || terraform workspace new "${WORKSPACE}"
-
-                        terraform init -input=false
                     '''
                 }
             }
@@ -66,26 +53,15 @@ pipeline {
             steps {
                 dir('eks_cluster') {
                     script {
-
                         def commonArgs = "-input=false -lock=true -no-color"
                         def approveFlag = params.AUTO_APPROVE ? "-auto-approve" : ""
 
                         if (params.TF_ACTION == 'plan') {
-
                             sh "terraform plan ${commonArgs}"
-
                         } else if (params.TF_ACTION == 'apply') {
-
                             sh "terraform apply ${commonArgs} ${approveFlag}"
-
                         } else if (params.TF_ACTION == 'destroy') {
-
                             sh "terraform destroy ${commonArgs} ${approveFlag}"
-
-                        } else {
-
-                            error "Unsupported TF_ACTION: ${params.TF_ACTION}"
-
                         }
                     }
                 }
@@ -104,15 +80,10 @@ pipeline {
         }
     }
 
-    // -----------------------------------------------------------------
-    // Notifications
-    // -----------------------------------------------------------------
     post {
-
         success {
             echo "✅ Terraform ${params.TF_ACTION} completed successfully."
         }
-
         failure {
             echo "❌ Terraform ${params.TF_ACTION} failed."
         }
