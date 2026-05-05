@@ -19,7 +19,7 @@ resource "kubernetes_config_map_v1" "aws_auth" {
     ])
   }
 
-  depends_on = [aws_eks_node_group.eks_node_group, aws_eks_node_group.node_group]
+  depends_on = [aws_eks_node_group.eks_node_group, ]
 }
 
 
