@@ -1,7 +1,7 @@
 resource "aws_security_group" "eks_node" {
     name = "eks_node_grp_sg"
     description = "allows all traffic"
-    vpc_id = var.vpc_id 
+    vpc_id = var.vpc_id
     ingress {
         description = "allows all traffic"
         from_port = 0

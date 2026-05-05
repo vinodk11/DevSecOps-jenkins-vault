@@ -14,15 +14,14 @@ resource "aws_eks_node_group" "eks_node_group" {
     disk_size = var.disk_size
     remote_access {
         ec2_ssh_key = var.key_pair_name
-        
     }
     tags = {
         Name = "my-eks-node-group"
     }
     depends_on = [
-        aws_iam_role_policy_attachment.node_role_attachment_1,
-        aws_iam_role_policy_attachment.node_role_attachment_2,
-        aws_iam_role_policy_attachment.node_role_attachment_3
+        aws_iam_role_policy_attachment.worker_node_policy,
+        aws_iam_role_policy_attachment.cni_policy,
+        aws_iam_role_policy_attachment.registry_policy
     ]
   
 }

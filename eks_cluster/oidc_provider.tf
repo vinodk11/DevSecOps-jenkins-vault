@@ -2,16 +2,12 @@ data "aws_eks_cluster" "cluster" {
   name = aws_eks_cluster.my_eks_cluster.name
 }
 
-data "tls_certificate" "eks_oidc" {
-  url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+data "aws_eks_cluster_auth" "cluster" {
+  name = aws_eks_cluster.my_eks_cluster.name
 }
 
-resource "aws_iam_openid_connect_provider" "eks_oidc_provider" {
+resource "aws_iam_openid_connect_provider" "oidc" {
+  url             = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
   client_id_list  = ["sts.amazonaws.com"]
-
-  thumbprint_list = [
-    data.tls_certificate.eks_oidc.certificates[0].sha1_fingerprint
-  ]
-
-  url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0afd40d9d"]
 }
