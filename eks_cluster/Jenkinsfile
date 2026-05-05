@@ -1,27 +1,14 @@
 pipeline {
     agent {
         dockerContainer {
-            image 'hashicorp/terraform:1.9.7'
-            args '--entrypoint="" -u root:root'
+            image 'hashicorp/terraform:light'
         }
     }
 
     parameters {
-        choice(
-            name: 'TF_ACTION',
-            choices: ['plan', 'apply', 'destroy'],
-            description: 'Select Terraform operation to run'
-        )
-        string(
-            name: 'WORKSPACE',
-            defaultValue: 'default',
-            description: 'Terraform workspace'
-        )
-        booleanParam(
-            name: 'AUTO_APPROVE',
-            defaultValue: true,
-            description: 'Skip approval prompt'
-        )
+        choice(name: 'TF_ACTION', choices: ['plan', 'apply', 'destroy'])
+        string(name: 'WORKSPACE', defaultValue: 'default')
+        booleanParam(name: 'AUTO_APPROVE', defaultValue: true)
     }
 
     environment {
@@ -70,22 +57,8 @@ pipeline {
 
         stage('Cleanup') {
             steps {
-                script {
-                    if (params.TF_ACTION == 'apply' || params.TF_ACTION == 'destroy') {
-                        archiveArtifacts artifacts: 'eks_cluster/**/*.tfstate', fingerprint: true
-                    }
-                }
                 cleanWs()
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Terraform ${params.TF_ACTION} completed successfully."
-        }
-        failure {
-            echo "❌ Terraform ${params.TF_ACTION} failed."
         }
     }
 }
