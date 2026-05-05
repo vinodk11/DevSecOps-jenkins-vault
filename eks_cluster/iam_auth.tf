@@ -29,12 +29,16 @@ provider "kubernetes" {
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"   # 👈 FULL PATH
+    command     = "/usr/bin/aws"   # 👈 FULL PATH
     args        = [
       "eks",
       "get-token",
       "--cluster-name",
       aws_eks_cluster.my_eks_cluster.name
     ]
+
+     env = {
+      AWS_REGION = "us-east-1"   # 👈 IMPORTANT (set your region)
+    }
   }
 }
