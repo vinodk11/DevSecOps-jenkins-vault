@@ -29,7 +29,7 @@ provider "kubernetes" {
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "/usr/local/bin/aws"   # 👈 FULL PATH
+    command     = "aws"   # 👈 FULL PATH
     args        = [
       "eks",
       "get-token",
