@@ -1,4 +1,4 @@
-resource "aws_iam_role" "node_role" {
+resource "aws_iam_role" "eks_node_group" {
     name = "eks-node-role"
     assume_role_policy = jsonencode ({
         Version = "2012-10-17"
