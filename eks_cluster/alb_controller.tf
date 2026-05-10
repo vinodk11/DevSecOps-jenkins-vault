@@ -55,18 +55,14 @@ resource "helm_release" "alb_controller" {
     kubernetes_service_account.alb_controller
   ]
 
-  set {
-    name  = "clusterName"
-    value = aws_eks_cluster.my_eks_cluster.name
-  }
+  values = [
+    yamlencode({
+      clusterName = aws_eks_cluster.my_eks_cluster.name
 
-  set {
-    name  = "serviceAccount.create"
-    value = "false"
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = kubernetes_service_account.alb_controller.metadata[0].name
-  }
+      serviceAccount = {
+        create = false
+        name   = kubernetes_service_account_v1.alb_controller.metadata[0].name
+      }
+    })
+  ]
 }
