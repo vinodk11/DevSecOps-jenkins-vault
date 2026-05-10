@@ -32,7 +32,7 @@ resource "aws_iam_role_policy_attachment" "alb_attach" {
 }
 
 
-resource "kubernetes_service_account" "alb_controller" {
+resource "kubernetes_service_account_v1" "alb_controller" {
   metadata {
     name      = "aws-load-balancer-controller"
     namespace = "kube-system"
