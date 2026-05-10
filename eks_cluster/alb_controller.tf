@@ -3,9 +3,6 @@ resource "aws_iam_policy" "alb_controller" {
   policy = file("${path.module}/iam_policy_alb.json")
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = aws_eks_cluster.my_eks_cluster.name
-}
 
 resource "aws_iam_role" "alb_controller_role" {
   name = "alb-controller-role"
