@@ -24,9 +24,12 @@
                        ]                                                                                                              
                    ) {                                                                                                                
                        sh 'kubectl apply -f Jenkins_Tools/jenkins_stateful_set/'                                                                    
-                       sh 'kubectl apply -f Jenkins_Tools/vault/'                                                                                   
-                       sh 'kubectl apply -f Jenkins_Tools/nexus/'                                                                                   
-                       sh 'kubectl apply -f Jenkins_Tools/sonar/'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/vault/' 
+                       sh 'sleep 10'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/nexus/' 
+                       sh 'sleep 10'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/sonar/'  
+                       sh 'sleep 10'                                                                                  
                    }                                                                                                                  
                }                                                                                                                      
            }                                                                                                                          

@@ -5,7 +5,7 @@ metadata:
   namespace: jenkins
 spec:
   serviceName: jenkins
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: jenkins
