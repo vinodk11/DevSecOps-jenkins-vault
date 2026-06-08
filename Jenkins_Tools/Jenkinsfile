@@ -23,10 +23,10 @@
                            ]                                                                                                          
                        ]                                                                                                              
                    ) {                                                                                                                
-                       sh 'kubectl apply -f jenkins_stateful_set/'                                                                    
-                       sh 'kubectl apply -f vault/'                                                                                   
-                       sh 'kubectl apply -f nexus/'                                                                                   
-                       sh 'kubectl apply -f sonar/'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/jenkins_stateful_set/'                                                                    
+                       sh 'kubectl apply -f Jenkins_Tools/vault/'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/nexus/'                                                                                   
+                       sh 'kubectl apply -f Jenkins_Tools/sonar/'                                                                                   
                    }                                                                                                                  
                }                                                                                                                      
            }                                                                                                                          
