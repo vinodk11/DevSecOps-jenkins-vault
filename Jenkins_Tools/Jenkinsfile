@@ -1,0 +1,35 @@
+ pipeline {                                                                                                                         
+       agent any                                                                                                                      
+                                                                                                                                                                                                                                                                        
+       stages {                                                                                                                       
+                                                                                                                                      
+           stage('Checkout') {                                                                                                        
+               steps {                                                                                                                
+                   git 'https://github.com/your-org/infra-repo.git'                                                                   
+               }                                                                                                                      
+           }                                                                                                                          
+                                                                                                                                      
+           stage('Deploy to EKS') {                                                                                                   
+               steps {                                                                                                                
+                   withKubeCredentials(                                                                                               
+                       kubectlCredentials: [                                                                                          
+                           [                                                                                                          
+                               caCertificate: '',                                                                                     
+                               clusterName: 'my-eks-cluster',                                                                         
+                               contextName: 'jenkins-context',                                                                        
+                               credentialsId: 'kube-config',                                                                          
+                               namespace: 'jenkins',                                                                                  
+                               serverUrl: 'https://82F9ED81685D8CB35DEC93A657770C51.gr7.us-east-1.eks.amazonaws.com'                  
+                           ]                                                                                                          
+                       ]                                                                                                              
+                   ) {                                                                                                                
+                       sh 'kubectl apply -f jenkins_stateful_set/'                                                                    
+                       sh 'kubectl apply -f vault/'                                                                                   
+                       sh 'kubectl apply -f nexus/'                                                                                   
+                       sh 'kubectl apply -f sonar/'                                                                                   
+                   }                                                                                                                  
+               }                                                                                                                      
+           }                                                                                                                          
+                                                                                                                                      
+       }                                                                                                                              
+   }                                                      

@@ -1,0 +1,242 @@
+Deploying jenkins & harshi-crop-vault on the eks cluster
+
+# Node.js Multi-Tier DevSecOps Project on Amazon EKS
+
+## Introduction
+
+This project demonstrates the end-to-end implementation of a production-ready **Node.js Multi-Tier Application** deployed on **Amazon EKS (Elastic Kubernetes Service)** using modern **DevSecOps practices**. The objective is to automate infrastructure provisioning, application deployment, security scanning, secret management, artifact storage, and continuous delivery within a cloud-native environment.
+
+The infrastructure provisioning process begins with **Terraform**, which is used to create and configure an AWS EC2 instance that serves as the bootstrap Jenkins server. From this server, an Amazon EKS cluster is provisioned and managed using Infrastructure as Code (IaC) principles.
+
+To ensure high availability and persistence, **Jenkins** is deployed inside the EKS cluster as a **Kubernetes StatefulSet**. The CI/CD pipeline automates the complete software delivery lifecycle, including source code checkout, build, testing, security scanning, artifact management, containerization, and deployment.
+
+The project integrates several industry-standard DevSecOps tools:
+
+* **Jenkins** – Continuous Integration and Continuous Deployment
+* **Amazon EKS** – Managed Kubernetes Platform
+* **Terraform** – Infrastructure Provisioning and Automation
+* **SonarQube** – Static Code Analysis and Code Quality Checks
+* **Trivy** – Container and Dependency Vulnerability Scanning
+* **Nexus Repository Manager** – Artifact and Package Repository
+* **HashiCorp Vault** – Centralized Secrets Management
+* **Docker** – Containerization of Applications
+* **Kubernetes** – Container Orchestration and Deployment
+
+Security is incorporated throughout the CI/CD pipeline using a **shift-left security approach**. Application source code is analyzed using SonarQube, container images are scanned with Trivy, and sensitive credentials such as Jenkins secrets, AWS access keys, database credentials, and application secrets are securely managed through HashiCorp Vault.
+
+The final outcome is a scalable, secure, and automated cloud-native platform capable of deploying and managing a multi-tier Node.js application on Kubernetes while following DevOps, DevSecOps, and Infrastructure as Code best practices.
+
+###########################Technical Requirements####################################
+
+The following tools, services, and components are required to successfully implement and deploy this project:
+
+### Infrastructure & Cloud
+
+* AWS Account
+* Amazon EC2 Instance (Jenkins Server)
+* Amazon EKS Cluster
+* AWS IAM Roles and Policies
+* AWS VPC, Subnets, Security Groups, and Load Balancers
+
+### Infrastructure as Code (IaC)
+
+* Terraform
+* AWS CLI
+* eksctl
+
+### Kubernetes & Containerization
+
+* Kubernetes (EKS)
+* kubectl
+* Helm
+* Docker
+
+### CI/CD & DevOps Tools
+
+* Jenkins (Deployed as StatefulSet)
+* Jenkins Kubernetes Plugin
+* Jenkins Service Account with Required RBAC Permissions
+
+### DevSecOps & Security
+
+* HashiCorp Vault
+* Trivy Vulnerability Scanner
+* SonarQube Code Quality and Security Scanner
+
+### Artifact Management
+
+* Nexus Repository Manager
+
+### Source Code Management
+
+* Git
+* GitHub / GitLab Repository
+
+### Application Stack
+
+* Node.js Multi-Tier Application
+* Dockerized Application Components
+
+### Storage & Persistence
+
+* Amazon EBS CSI Driver
+* Persistent Volumes (PV)
+* Persistent Volume Claims (PVC)
+
+### Monitoring & Logging (Optional Enhancement)
+
+* Prometheus
+* Grafana
+* AlertManager
+* Loki
+
+
+#################################################################################
+
+📚 Prerequisites
+
+Technical Requirements:
+
+jenkins server
+terraform 
+aws cli 
+vault 
+EKS cluster 
+jenkins service account
+HELM
+KUBE CTL
+SONAR QUBE
+NEXUS
+IAM ROLE 
+EKS CTL
+
+
+##################jenkins pulgins:###############################
+Pipeline
+Git
+docker
+GitHub Integration
+Credentials Binding
+SSH Agent
+Terraform (optional but helpful)
+Blue Ocean (optional UI improvement)
+config file provider
+kubernetes
+docker 
+kubernetes cli 
+Maven Integration
+SonarQube ScannerVersion
+HashiCorp Vault
+Hashicorp Vault Pipeline
+
+
+###################Provising Infrastrcture############################# 
+1.Step up jenkins server 
+2.provising eks cluster using terraform
+
+
+Environment Setup
+1.jenskins as a statefull set  
+2.harsicrop vault 
+3.SONAR QUBE & NEXUS
+
+Deploying the zen-pharma application
+
+./backend.sh my-terraform-state-bucket-1188 us-east-1 terraform-state-lock
+
+
+
+
+aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster
+
+kubectl config get-contexts
+kubectl config use-context my-eks-
+
+
+kubectl get nodes
+
+get pods -n kube-system 
+
+
+helm install jenkins jenkins/jenkins \
+  --namespace jenkins \
+  --create-namespace \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=jenkins \
+  --set persistence.storageClass=gp3
+
+
+
+
+
+
+eksctl utils associate-iam-oidc-provider --region us-east-1 --cluster my-eks-cluster  --approve
+
+
+
+
+This may be due to the current user or role not having Kubernetes RBAC permissions to describe cluster resources or not having an entry in the cluster’s auth config map.
+
+
+
+Port	   Protocol	       Needed On
+6443	    TCP	            Master
+2379-2380	TCP	            Master
+
+10257	    TCP	            Master
+10259	    TCP	            Master
+8472	    UDP	            Flannel
+4789	    UDP	            Calico VXLAN
+179        TCP	            Calico BGP
+10250	    TCP	            All nodes
+10252      TCP	            All nodes
+10251       TCP	            All nodes
+30000-32767 TCP             ALL nodes
+
+
+
+
+| Port      | Protocol | Purpose            |
+| --------- | -------- | ------------------ |
+| 53        | UDP/TCP  | CoreDNS            |
+| 8472      | UDP      | Flannel VXLAN      |
+| 6443      | TCP      | Kubernetes API     |
+| 2379-2380 | TCP      | etcd               |
+| 10250     | TCP      | kubelet            |
+| 10257     | TCP      | controller-manager |
+| 10259     | TCP      | scheduler          |
+
+
+
+############################
+squ_ed67ac61ab0262e106a344be2048f818d3a47b09
+
+
+  <server>
+    <id></id>
+      <id>maven-releases</id>
+      <username>${NEXUS_USER}</username>
+      <password>${NEXUS_PASS}</password>
+    </server>
+
+  <server>
+     <id></id>
+     <id>maven-snapshots</id>
+     <username>${NEXUS_USER}</username>
+     <password>${NEXUS_PASS}</password>
+   </server>
+
+
+[INFO] --- deploy:3.1.3:deploy (default-deploy) @ bankapp ---
+Downloading from maven-snapshots: http://nexus.nexus:8081/repository/maven-snapshots/com/example/bankapp/0.0.2-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata com.example:bankapp:0.0.2-SNAPSHOT/maven-metadata.xml from/to maven-snapshots (http://nexus.nexus:8081/repository/maven-snapshots/): status code: 401, reason phrase: Unauthorized (401)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.116 s
+[INFO] Finished at: 2026-05-25T11:23:49Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:3.1.3:deploy (default-deploy) on project bankapp: Failed to retrieve remote metadata com.example:bankapp:0.0.2-SNAPSHOT/maven-metadata.xml: Could not transfer metadata com.example:bankapp:0.0.2-SNAPSHOT/maven-metadata.xml from/to maven-snapshots (http://nexus.nexus:8081/repository/maven-snapshots/): status code: 401, reason phrase: Unauthorized (401) -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
