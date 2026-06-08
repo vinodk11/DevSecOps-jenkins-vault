@@ -5,7 +5,7 @@
                                                                                                                                       
            stage('Checkout') {                                                                                                        
                steps {                                                                                                                
-                   git 'https://github.com/your-org/infra-repo.git'                                                                   
+                   https://github.com/vinodk11/DevSecOps-jenkins-vault.git'                                                                   
                }                                                                                                                      
            }                                                                                                                          
                                                                                                                                       
