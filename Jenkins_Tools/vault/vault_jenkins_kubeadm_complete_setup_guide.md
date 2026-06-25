@@ -520,7 +520,7 @@ Restart Jenkins.
 
 ---
 
-# 24. Configure Vault in Jenkins
+###### 24. Configure Vault in Jenkins
 
 Go to:
 
@@ -545,7 +545,7 @@ Leave Prefix Path EMPTY.
 
 ---
 
-# 25. Create Vault Kubernetes Credential
+##### 25. Create Vault Kubernetes Credential
 
 Go to:
 
@@ -572,7 +572,7 @@ Leave EMPTY.
 
 ---
 
-# 26. Jenkins Pipeline Example
+#### 26. Jenkins Pipeline Example
 
 ```groovy
 pipeline {
