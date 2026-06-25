@@ -23,18 +23,7 @@ pipeline {
                     ]
                 ) {
                     sh 'kubectl apply -f Jenkins_Tools/jenkins_stateful_set/'
-                    
-                    // Deploy vault in correct dependency order
-                    sh 'kubectl apply -f Jenkins_Tools/vault/00-namespace.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/serviceaccount.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/role.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/rolebinding.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/clusterrolebinding.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/pvc.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/service.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/stateful_set.yaml'
-                    sh 'kubectl apply -f Jenkins_Tools/vault/ingress.yaml'
-                    
+                    sh 'kubectl apply -f Jenkins_Tools/vault/'
                     sh 'sleep 10'
                     sh 'kubectl apply -f Jenkins_Tools/nexus/'
                     sh 'sleep 10'
