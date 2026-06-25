@@ -6,6 +6,7 @@ metadata:
 spec:
   serviceName: jenkins
   replicas: 1
+
   selector:
     matchLabels:
       app: jenkins
@@ -18,9 +19,16 @@ spec:
     spec:
       serviceAccountName: jenkins
 
+      securityContext:
+        fsGroup: 1000
+
       containers:
       - name: jenkins
         image: jenkins/jenkins:lts
+
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
 
         ports:
         - containerPort: 8080
@@ -33,7 +41,6 @@ spec:
           requests:
             cpu: "500m"
             memory: "1Gi"
-
           limits:
             cpu: "1"
             memory: "2Gi"
@@ -45,13 +52,10 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: jenkins-home
-
     spec:
       accessModes:
       - ReadWriteOnce
-
       storageClassName: gp3-storage
-
       resources:
         requests:
           storage: 20Gi

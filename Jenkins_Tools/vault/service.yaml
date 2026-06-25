@@ -4,10 +4,9 @@ metadata:
   name: vault
   namespace: vault
 spec:
+  type: ClusterIP
   selector:
     app: vault
-
   ports:
   - port: 8200
     targetPort: 8200
-type: ClusterIP
