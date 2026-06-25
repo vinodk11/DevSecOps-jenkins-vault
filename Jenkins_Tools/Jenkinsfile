@@ -19,7 +19,7 @@
                                contextName: 'jenkins-context',                                                                        
                                credentialsId: 'kube-config',                                                                          
                                namespace: 'jenkins',                                                                                  
-                               serverUrl: 'https://82F9ED81685D8CB35DEC93A657770C51.gr7.us-east-1.eks.amazonaws.com'                  
+                               serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'                  
                            ]                                                                                                          
                        ]                                                                                                              
                    ) {                                                                                                                
