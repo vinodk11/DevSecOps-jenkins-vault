@@ -1,38 +1,47 @@
- pipeline {                                                                                                                         
-       agent any                                                                                                                      
-                                                                                                                                                                                                                                                                        
-       stages {                                                                                                                       
-                                                                                                                                      
-           stage('Checkout') {                                                                                                        
-               steps {                                                                                                                
-                 git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git', branch: 'main'                                                                 
-               }                                                                                                                      
-           }                                                                                                                          
-                                                                                                                                      
-           stage('Deploy to EKS') {                                                                                                   
-               steps {                                                                                                                
-                   withKubeCredentials(                                                                                               
-                       kubectlCredentials: [                                                                                          
-                           [                                                                                                          
-                               caCertificate: '',                                                                                     
-                               clusterName: 'my-eks-cluster',                                                                         
-                               contextName: 'jenkins-context',                                                                        
-                               credentialsId: 'kube-config',                                                                          
-                               namespace: 'jenkins',                                                                                  
-                               serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'                  
-                           ]                                                                                                          
-                       ]                                                                                                              
-                   ) {                                                                                                                
-                       sh 'kubectl apply -f Jenkins_Tools/jenkins_stateful_set/'                                                                    
-                       sh 'kubectl apply -f Jenkins_Tools/vault/' 
-                       sh 'sleep 10'                                                                                   
-                       sh 'kubectl apply -f Jenkins_Tools/nexus/' 
-                       sh 'sleep 10'                                                                                   
-                       sh 'kubectl apply -f Jenkins_Tools/sonar/'  
-                       sh 'sleep 10'                                                                                  
-                   }                                                                                                                  
-               }                                                                                                                      
-           }                                                                                                                          
-                                                                                                                                      
-       }                                                                                                                              
-   }                                                      
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git', branch: 'main'
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                withKubeCredentials(
+                    kubectlCredentials: [
+                        [
+                            caCertificate: '',
+                            clusterName: 'my-eks-cluster',
+                            contextName: 'jenkins-context',
+                            credentialsId: 'kube-config',
+                            namespace: 'jenkins',
+                            serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'
+                        ]
+                    ]
+                ) {
+                    sh 'kubectl apply -f Jenkins_Tools/jenkins_stateful_set/'
+                    
+                    // Deploy vault in correct dependency order
+                    sh 'kubectl apply -f Jenkins_Tools/vault/00-namespace.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/serviceaccount.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/role.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/rolebinding.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/clusterrolebinding.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/pvc.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/service.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/stateful_set.yaml'
+                    sh 'kubectl apply -f Jenkins_Tools/vault/ingress.yaml'
+                    
+                    sh 'sleep 10'
+                    sh 'kubectl apply -f Jenkins_Tools/nexus/'
+                    sh 'sleep 10'
+                    sh 'kubectl apply -f Jenkins_Tools/sonar/'
+                    sh 'sleep 10'
+                }
+            }
+        }
+    }
+}
