@@ -8,26 +8,6 @@ pipeline {
             }
         }
 
-        stage('Setup Kubeconfig') {
-            steps {
-                withKubeCredentials(
-                    kubectlCredentials: [
-                        [
-                            caCertificate: '',
-                            clusterName: 'my-eks-cluster',
-                            contextName: 'jenkins-context',
-                            credentialsId: 'kube-config',
-                            namespace: 'jenkins',
-                            serverUrl: 'https://F5AACCF213EEF916E4A1B9E6AA3E9CA8.gr7.us-east-1.eks.amazonaws.com'
-                        ]
-                    ]
-                ) {
-                    sh 'kubectl version --client'
-                    sh 'kubectl get nodes'
-                }
-            }
-        }
-
 
         stage('Deploy Jenkins') {
             steps {
