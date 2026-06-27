@@ -12,48 +12,6 @@ pipeline {
             }
         }
 
-        stage('Setup Kubeconfig') {
-            steps {
-                withKubeCredentials(
-                    kubectlCredentials: [
-                        [
-                            caCertificate: '',
-                            clusterName: 'my-eks-cluster',
-                            contextName: 'jenkins-context',
-                            credentialsId: 'kube-config',
-                            namespace: 'jenkins',
-                            serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'
-                        ]
-                    ]
-                ) {
-                    sh 'kubectl version --client'
-                    sh 'kubectl get nodes'
-                }
-            }
-        }
-
-        stage('Create Jenkins ServiceAccount') {
-            steps {
-                withKubeCredentials(
-                    kubectlCredentials: [
-                        [
-                            caCertificate: '',
-                            clusterName: 'my-eks-cluster',
-                            contextName: 'jenkins-context',
-                            credentialsId: 'kube-config',
-                            namespace: 'jenkins',
-                            serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'
-                        ]
-                    ]
-                ) {
-                    sh '''
-                        chmod +x Jenkins_Tools/create-jenkins-sa.sh
-                        Jenkins_Tools/create-jenkins-sa.sh
-                    '''
-                }
-            }
-        }
-
         stage('Deploy Jenkins') {
             steps {
                 withKubeCredentials(
