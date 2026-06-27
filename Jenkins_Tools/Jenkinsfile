@@ -18,7 +18,7 @@ pipeline {
                             contextName: 'jenkins-context',
                             credentialsId: 'kube-config',
                             namespace: 'jenkins',
-                            serverUrl: 'https://75784918A311A1B63E47CDF0EE0A2BDD.gr7.us-east-1.eks.amazonaws.com'
+                            serverUrl: 'https://F5AACCF213EEF916E4A1B9E6AA3E9CA8.gr7.us-east-1.eks.amazonaws.com'
                         ]
                     ]
                 ) {
