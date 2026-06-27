@@ -1,4 +1,3 @@
-################################vault/ingress.#################
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,17 +5,17 @@ metadata:
   namespace: vault
   annotations:
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: devops-tools
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
 spec:
   ingressClassName: alb
-
   rules:
-  - http:
+  - host: vault.local
+    http:
       paths:
       - path: /
         pathType: Prefix
-
         backend:
           service:
             name: vault

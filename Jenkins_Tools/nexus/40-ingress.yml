@@ -4,9 +4,12 @@ metadata:
   name: nexus-ingress
   namespace: nexus
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "500m"
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: devops-tools
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
-  ingressClassName: nginx
+  ingressClassName: alb
   rules:
   - host: nexus.local
     http:
