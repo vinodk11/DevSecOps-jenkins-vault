@@ -22,26 +22,36 @@ spec:
 
       containers:
       - name: vault
-        image: hashicorp/vault:latest
+        image: hashicorp/vault:1.18.1
 
         args:
         - server
-        - -dev
+        - /vault/config/vault.hcl
 
         ports:
         - containerPort: 8200
           name: vault
 
         env:
-        - name: VAULT_DEV_ROOT_TOKEN_ID
-          value: root123
+        - name: VAULT_ADDR
+          value: http://127.0.0.1:8200
 
-        - name: VAULT_DEV_LISTEN_ADDRESS
-          value: 0.0.0.0:8200
+        securityContext:
+          capabilities:
+            add:
+            - IPC_LOCK
 
         volumeMounts:
+        - name: config
+          mountPath: /vault/config
+
         - name: vault-storage
           mountPath: /vault/file
+
+      volumes:
+      - name: config
+        configMap:
+          name: vault-config
 
   volumeClaimTemplates:
   - metadata:
