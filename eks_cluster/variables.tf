@@ -28,7 +28,7 @@ variable "subnet_ids" {
 variable "instance_type" {
   description = "EC2 instance type for EKS worker nodes."
   type        = string
-  default     = "t3.medium"
+  default     = "t3.large"
 }
 
 # Disk size (GiB) for worker nodes
