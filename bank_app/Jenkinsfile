@@ -14,7 +14,7 @@ spec:
     args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 
   - name: kubectl
-    image: bitnami/kubectl:1.33
+    image: registry.k8s.io/kubectl:v1.30.14
     command:
       - cat
     tty: true
