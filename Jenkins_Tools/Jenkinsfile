@@ -77,12 +77,7 @@ pipeline {
                           --timeout 10m
 
                          kubectl apply -f Jenkins_Tools/vault/70-ingress.yaml
-                    '''
-
-                    sh '''
-                        kubectl rollout status statefulset/vault -n vault --timeout=600s
-                        kubectl rollout status deployment/vault-agent-injector -n vault --timeout=600s
-                    '''
+                    '''   
                 }
             }
         }
