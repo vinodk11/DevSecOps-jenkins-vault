@@ -595,8 +595,15 @@ pipeline {
                         ]
                     ]]
                 ) {
-                    sh 'echo $USERNAME'
-                    sh 'echo $PASSWORD'
+                    sh '''
+                    if [ -n "$USERNAME" ]; then
+                       echo "Username received from Vault"
+                    fi
+
+                    if [ -n "$PASSWORD" ]; then
+                        echo "Password received from Vault"
+                    fi
+                    '''
                 }
             }
         }

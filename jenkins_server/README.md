@@ -323,6 +323,7 @@ Terraform Apply
 Jenkins EC2 Instance Created
 ↓
 IAM Role Attached to EC2
+
 ↓
 Jenkins Uses IAM Role
 ↓

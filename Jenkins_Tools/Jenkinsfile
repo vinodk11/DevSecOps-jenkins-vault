@@ -59,18 +59,33 @@ pipeline {
                             clusterName: 'my-eks-cluster',
                             contextName: 'jenkins-context',
                             credentialsId: 'kube-config',
-                            namespace: 'jenkins',
+                            namespace: 'vault',
                             serverUrl: 'https://2CA206EF3E6BA779C0F20C56A8DAE43E.gr7.us-east-1.eks.amazonaws.com'
                         ]
                     ]
                 ) {
-                    sh 'kubectl apply -f Jenkins_Tools/vault/'
-                    sh 'sleep 15'
-                    sh 'kubectl rollout status statefulset/vault -n vault --timeout=120s'
+                    sh '''
+                        helm repo add hashicorp https://helm.releases.hashicorp.com || true
+                        helm repo update
+
+                        kubectl create namespace vault --dry-run=client -o yaml | kubectl apply -f -
+
+                         helm upgrade --install vault hashicorp/vault \
+                         -n vault \
+                         -f Jenkins_Tools/vault/vault-values.yaml \
+                          --wait \
+                          --timeout 10m
+
+                         kubectl apply -f Jenkins_Tools/vault/70-ingress.yaml
+                    '''
+
+                    sh '''
+                        kubectl rollout status statefulset/vault -n vault --timeout=600s
+                        kubectl rollout status deployment/vault-agent-injector -n vault --timeout=600s
+                    '''
                 }
             }
         }
-
         stage('Deploy Nexus') {
             steps {
                 withKubeCredentials(

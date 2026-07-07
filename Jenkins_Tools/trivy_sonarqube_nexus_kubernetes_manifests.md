@@ -556,4 +556,4 @@ kubectl get pod -n ingress-nginx -o wide
 kubectl get svc -n ingress-nginx
 
 
-squ_ed67ac61ab0262e106a344be2048f818d3a47b09
+squ_ade3f9021e2ff6cedcb6c458be75c75a70523fd6
