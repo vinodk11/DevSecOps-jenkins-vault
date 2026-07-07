@@ -14,7 +14,7 @@ spec:
     args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 
   - name: kubectl
-    image: registry.k8s.io/kubectl:v1.30.14
+    image: lachlanevenson/k8s-kubectl:v1.30.0
     command:
     - /bin/sh
     args:
