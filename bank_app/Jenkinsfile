@@ -1,16 +1,12 @@
 pipeline {
     agent {
         kubernetes {
-<<<<<<< HEAD
             defaultContainer 'kubectl'
-=======
->>>>>>> a1c23c9 (modified:Jenkins_Tools/jenkinsfile)
             yaml '''
 apiVersion: v1
 kind: Pod
 spec:
   serviceAccountName: jenkins
-<<<<<<< HEAD
 
   containers:
   - name: jnlp
@@ -18,24 +14,13 @@ spec:
     args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 
   - name: kubectl
-    image: lachlanevenson/k8s-kubectl:v1.30.0
+    image: registry.k8s.io/kubectl:v1.30.14
     command:
     - /bin/sh
     args:
     - -c
     - sleep infinity
 '''
-=======
-  containers:
-  - name: kubectl
-    image: registry.k8s.io/kubectl:v1.30.14
-    command:
-    - sleep
-    args:
-    - infinity
-'''
-            defaultContainer 'kubectl'
->>>>>>> a1c23c9 (modified:Jenkins_Tools/jenkinsfile)
         }
     }
 
@@ -49,7 +34,6 @@ spec:
 
         stage('Deploy Application') {
             steps {
-<<<<<<< HEAD
                 container('kubectl') {
                     withVault(
                         configuration: [
@@ -94,46 +78,10 @@ spec:
                               --timeout=300s
                         '''
                     }
-=======
-                withVault(
-                    configuration: [
-                        vaultUrl: 'http://vault.vault:8200',
-                        vaultCredentialId: 'vault-k8s',
-                        engineVersion: 2
-                    ],
-                    vaultSecrets: [[
-                        path: 'secret/bank_app',
-                        secretValues: [
-                            [vaultKey: 'token',  envVar: 'KUBE_TOKEN'],
-                            [vaultKey: 'server', envVar: 'KUBE_SERVER'],
-                            [vaultKey: 'ca.crt', envVar: 'KUBE_CA']
-                        ]
-                    ]]
-                ) {
-
-                    sh '''
-                        echo "$KUBE_CA" > ca.crt
-
-                        kubectl \
-                          --server="$KUBE_SERVER" \
-                          --token="$KUBE_TOKEN" \
-                          --certificate-authority=ca.crt \
-                          apply -f bank_app/
-
-                        kubectl \
-                          --server="$KUBE_SERVER" \
-                          --token="$KUBE_TOKEN" \
-                          --certificate-authority=ca.crt \
-                          rollout status deployment/bankapp \
-                          -n bankapp \
-                          --timeout=300s
-                    '''
-
                 }
             }
         }
     }
-
 
     post {
         always {
@@ -145,9 +93,7 @@ spec:
         }
 
         failure {
-            echo "Application deployment failed."
+            echo "Application deployment ---failed."
         }
     }
-
-
 }
