@@ -42,7 +42,7 @@ spec:
                             engineVersion: 2
                         ],
                         vaultSecrets: [[
-                            path: 'secret/ks8',
+                            path: 'secret/kS8',
                             secretValues: [
                                 [vaultKey: 'token',  envVar: 'KUBE_TOKEN'],
                                 [vaultKey: 'server', envVar: 'KUBE_SERVER'],
