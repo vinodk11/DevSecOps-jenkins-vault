@@ -52,30 +52,26 @@ spec:
                     ) {
 
                         sh '''
-                            set -e
-
-                            echo "$KUBE_CA" > ca.crt
+                            set -x
 
                             echo "Checking kubectl..."
                             kubectl version --client
 
+                            echo "$KUBE_CA" > ca.crt
+
+                            echo "Checking cluster..."
+                            kubectl \
+                                --server="$KUBE_SERVER" \
+                                --token="$KUBE_TOKEN" \
+                                --certificate-authority=ca.crt \
+                                get nodes
+
                             echo "Applying manifests..."
-
                             kubectl \
-                              --server="$KUBE_SERVER" \
-                              --token="$KUBE_TOKEN" \
-                              --certificate-authority=ca.crt \
-                              apply -f bank_app/
-
-                            echo "Waiting for rollout..."
-
-                            kubectl \
-                              --server="$KUBE_SERVER" \
-                              --token="$KUBE_TOKEN" \
-                              --certificate-authority=ca.crt \
-                              rollout status deployment/webapps \
-                              -n webapps \
-                              --timeout=300s
+                                --server="$KUBE_SERVER" \
+                                --token="$KUBE_TOKEN" \
+                                --certificate-authority=ca.crt \
+                                apply -f bank_app/
                         '''
                     }
                 }
