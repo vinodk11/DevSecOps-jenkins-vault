@@ -300,13 +300,8 @@ This confirms Jenkins is using the EC2 IAM Role.
 An automated bootstrapping script(install_tools_script.sh) install and configure all the required ecosystem tools.
 
 Required Tools:
-Docker	   Container runtime engine	docker      	--version
-AWS CLI	   AWS command-line interface tool	    	aws --version
-kubectl	   Kubernetes cluster CLI control	    	kubectl version --client
-eksctl	   Amazon EKS cluster orchestration     	CLI	eksctl version
-Helm	   Kubernetes package manager	helm    	version
-Terraform  Infrastructure as Code (IaC) tool	  	terraform version
-Java	   Core runtime required to run Jenkins	 	java -version
+
+![Alt text](content/16-51-02.png)
 
 ```bash
 tail -f  /var/log/user-data.log
