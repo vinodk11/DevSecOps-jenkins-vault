@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git'
+                git url: 'https://github.com/vinodk11/DevSecOps-jenkins-vault.git', branch: 'main'
             }
         }
 
