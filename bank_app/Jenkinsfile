@@ -2,19 +2,18 @@ pipeline {
     agent {
         kubernetes {
             defaultContainer 'kubectl'
-            yaml '''
+           yaml '''
 apiVersion: v1
 kind: Pod
 spec:
   serviceAccountName: jenkins
-
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest-jdk21
     args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 
   - name: kubectl
-    image: registry.k8s.io/kubectl:v1.30.14
+    image: bitnami/kubectl:1.30
     command:
     - /bin/sh
     args:
