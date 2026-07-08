@@ -14,7 +14,7 @@ spec:
     args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 
   - name: kubectl
-    image: rancher/kubectl:v1.30.14 
+    image: vinod1188/kubectlpod:v1
     command:
     - /bin/sh
     args:
