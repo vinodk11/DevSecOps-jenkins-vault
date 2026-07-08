@@ -520,6 +520,7 @@ http://nexus.nexus:8081
 
 http://vault.vault:8200
 
+vault-k8s
 
 enterprise DevOps concepts
 
@@ -556,4 +557,6 @@ kubectl get pod -n ingress-nginx -o wide
 kubectl get svc -n ingress-nginx
 
 
-squ_159d091a2543978b4665fe67f11f1039a2bcddab
+squ_58d7b735fd929e6bc8f59b49541bce057f18190a
+
+
