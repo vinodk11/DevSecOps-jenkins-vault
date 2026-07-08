@@ -103,13 +103,7 @@ Region (Example: us-east-1)
 Output Format (json)
 ```
 
-Verify:
 
-```bash
-aws sts get-caller-identity
-```
-
----
 
 # Step 5: Install Terraform
 
@@ -152,7 +146,7 @@ cd repository
 Example:
 
 ```bash
-git clone https://github.com/company/devsecops-project.git
+git clone https://github.com/<your-repo>/devsecops-project.git
 
 cd devsecops-project
 ```
@@ -299,14 +293,12 @@ This confirms Jenkins is using the EC2 IAM Role.
 Check:
 
 ```bash
-systemctl status jenkins
+tail -f  /var/log/user-data.log
 ```
 
-or
+The above log  the version installed and intail jenkins password 
 
-```bash
-docker ps
-```
+![Alt text](content/16-51-06.png)
 
 depending on your Terraform configuration.
 
@@ -337,7 +329,7 @@ Deploy Nexus
 ↓
 Deploy Vault
 ↓
-Deploy Node.js Multi-Tier Application
+Deploy Java Application
 
 ---
 
