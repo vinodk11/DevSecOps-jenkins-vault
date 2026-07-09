@@ -1,6 +1,6 @@
 # Deploying Jenkins Server on AWS Using Terraform from GitHub Repository
 
-## Overview
+# Overview:
 
 This guide explains how to provision a Jenkins EC2 server on AWS using Terraform from your local machine. Once the Jenkins server is created, an IAM Role attached to the EC2 instance will provide AWS permissions, eliminating the need to store AWS Access Keys on the Jenkins server.
 
@@ -22,7 +22,17 @@ Before starting, ensure you have:
 * AWS CLI Installed
 * GitHub Repository containing Terraform code
 * IAM User with Programmatic Access (for initial provisioning only)
-*
+
+
+---
+
+An automated bootstrapping script(install_tools_script.sh) install and configure all the required ecosystem tools.
+
+Required Tools:
+
+![Alt text](content/16-51-02.png)
+
+
 
 ---
 
@@ -69,33 +79,7 @@ AWS_SECRET_ACCESS_KEY
 
 ---
 
-# Step 3: Install AWS CLI
-
-### Linux
-
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-
-unzip awscliv2.zip
-
-sudo ./aws/install
-```
-
-Verify:
-
-```bash
-aws --version
-```
-
-Expected:
-
-```bash
-aws-cli/2.x.x
-```
-
----
-
-# Step 4: Configure AWS CLI
+# Step 3: Configure AWS CLI
 
 ```bash
 aws configure
@@ -110,39 +94,9 @@ Region (Example: us-east-1)
 Output Format (json)
 ```
 
-
-
-# Step 5: Install Terraform
-
-### Ubuntu
-
-```bash
-sudo apt update
-
-sudo apt install -y gnupg software-properties-common
-
-wget -O- https://apt.releases.hashicorp.com/gpg | \
-gpg --dearmor | \
-sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-sudo tee /etc/apt/sources.list.d/hashicorp.list
-
-sudo apt update
-
-sudo apt install terraform
-```
-
-Verify:
-
-```bash
-terraform version
-```
-
 ---
 
-# Step 6: Clone GitHub Repository
+# Step 4: Clone GitHub Repository
 
 ```bash
 git clone https://github.com/<organization>/<repository>.git
@@ -160,7 +114,7 @@ cd devsecops-project
 
 ---
 
-# Step 7: Review Terraform Variables
+# Step 5: Review Terraform Variables
 
 Open:
 
@@ -184,7 +138,7 @@ Modify values as required.
 
 ---
 
-# Step 8: Initialize Terraform
+# Step 6: Initialize Terraform
 
 ```bash
 terraform init
@@ -200,7 +154,7 @@ Terraform has been successfully initialized
 
 ---
 
-# Step 9: Validate Terraform Code
+# Step 7: Validate Terraform Code
 
 ```bash
 terraform validate
@@ -214,7 +168,7 @@ Success! The configuration is valid.
 
 ---
 
-# Step 10: Review Infrastructure Plan
+# Step 8: Review Infrastructure Plan
 
 ```bash
 terraform plan
@@ -231,7 +185,7 @@ Review resources:
 
 ---
 
-# Step 11: Create Jenkins Server
+# Step 9: Create Jenkins Server
 
 ```bash
 terraform apply -auto-approve
@@ -247,7 +201,7 @@ Terraform provisions:
 
 ---
 
-# Step 12: Obtain Jenkins Server Public IP
+# Step 10: Obtain Jenkins Server Public IP
 
 ```bash
 terraform output
@@ -255,13 +209,11 @@ terraform output
 
 Example:
 
-```text
-jenkins_public_ip = 54.xx.xx.xx
-```
+![Alt text](content/16-51-03.png)
 
 ---
 
-# Step 13: Connect to Jenkins Server
+# Step 11: Connect to Jenkins Server
 
 ```bash
 ssh -i devsecops-key.pem ubuntu@<public-ip>
@@ -275,7 +227,7 @@ ssh -i devsecops-key.pem ubuntu@54.xx.xx.xx
 
 ---
 
-# Step 14: Verify IAM Role Attachment
+# Step 12: Verify IAM Role Attachment
 
 No AWS access keys are required on Jenkins.
 
@@ -295,13 +247,7 @@ This confirms Jenkins is using the EC2 IAM Role.
 
 ---
 
-# Step 15: Verify Terraform Deployment & Tool Installation
-
-An automated bootstrapping script(install_tools_script.sh) install and configure all the required ecosystem tools.
-
-Required Tools:
-
-![Alt text](content/16-51-02.png)
+# Step 13: Verify Tool Installation and fetching jenkins intial password
 
 ```bash
 tail -f  /var/log/user-data.log
@@ -309,8 +255,91 @@ tail -f  /var/log/user-data.log
 
 ![Alt text](content/16-51-06.png)
 
-depending on the Terraform configuration.
+---
+# Step 14: Now configure the pielpeine to provision EKS cluster
 
+Complete the intail setup of jenkins 
+Grab the intial pessword from  "tail -f /var/log/user-data.log" and complete the intail setup.  
+
+![Alt text](content/16-51-04.png)
+
+Install the pulgins:
+-> docker 
+-> terrafrom
+-> pipeline stage view 
+-> kube cli
+-> kubernetes credentials provider 
+-> kubernetes 
+
+---
+# Step 13: Now configure the pielpeine to provision EKS cluster
+
+Configure the Jenkins Pipeline to Provision EKS Cluster
+Follow these structured steps to configure, parameterize, and execute your Jenkins pipeline using the provided repository to provision your Amazon EKS infrastructure.
+
+![Alt text](content/16-51-05.png)
+---
+# 13.1: General Settings & Log Rotation Configuration
+From the Jenkins dashboard, navigate to your pipeline named Tools and click Configure in the left sidebar.
+
+Under the General tab, check the box for Discard old builds.
+
+Set the Strategy to Log Rotation.
+
+Leave Days to keep builds blank, and set Max # of builds to keep to 3. This prevents build history from consuming excessive disk space on your Jenkins server.
+
+![Alt text](content/16-51-07.png)
+---
+# 13.2: Pipeline Definition & SCM Configuration
+Scroll down to the Pipeline section.
+
+Change the Definition dropdown to Pipeline script from SCM.
+
+Set the SCM dropdown to Git.
+
+Input your source code details exactly as shown below:
+
+Repository URL: <your Repository>
+
+Credentials: - none - (if it is a public repository)
+
+Branch Specifier: */master
+
+Set the Script Path to target your cluster directory: eks_cluster/Jenkinsfile.
+
+Ensure Lightweight checkout is checked.
+
+Click Apply and then Save.
+![Alt text](content/16-51-08.png)
+---
+
+# 13.3: Initial Pipeline Landing Page
+After saving, you will be redirected to the pipeline dashboard. Because the pipeline has just been configured from SCM and has not executed its first run yet, the Stage View will display a notice stating: "No data available. This Pipeline has not yet run."
+
+![Alt text](content/16-51-09.png)
+---
+
+
+💡 Note: The "Build with Parameters" option will appear on the left menu after Jenkins reads the Jenkinsfile during its initial run configuration evaluation.
+
+# 13.4: Triggering the Parameterized Build
+Click on Build with Parameters from the left-hand navigation panel.
+
+Define the execution parameters for your infrastructure deployment:
+
+TF_ACTION: Select apply from the dropdown menu to provision the cluster.
+
+WORKSPACE: Input default (or your specific target environment name).
+
+AUTO_APPROVE: Check this box to pass the -auto-approve flag to Terraform, ensuring a completely hands-off execution.
+
+Click the green Build button to initiate the run.
+
+![Alt text](content/16-51-10.png)
+---
+![Alt text](content/16-51-11.png)
+---
+![Alt text](content/16-51-12.png)
 ---
 
 # Security Best Practices
