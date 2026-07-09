@@ -587,13 +587,13 @@ If this is a fresh Vault installation, enable the KV v2 engine using the followi
 ```bash
 kubectl exec -n vault -it vault-0 -- vault secrets enable -path=secret kv-v2
 ```
-
+Below secrets are created to test within a test pipeline wether jenkins is retrieving serets or not
 ```bash
 kubectl exec -n vault -it vault-0 -- vault kv put secret/jenkins \
   username=admin \
   password=SuperSecret123
 ```
-These secrets are created to test within  a test pipeline wether jenkins reterving serets or not 
+ 
 
 ```bash
 kubectl exec -n vault -it vault-0 sh
@@ -623,7 +623,7 @@ ca.crt="$(cat ca.crt)"
 kubectl exec -n vault -it vault-0 -- \
 vault kv get secret/kS8
 ```
-# Step-8. Create policy and copy 
+# Step-9. Create policy and copy 
 
 ```bash
 cat <<EOF > jenkins-policy.hcl
@@ -682,7 +682,7 @@ kubectl cp jenkins-policy.hcl vault/vault-0:/tmp/
 kubectl exec -n vault -it vault-0 -- \
 vault policy write jenkins-policy /tmp/jenkins-policy.hcl
 ```
-# Step-9. Create Jenkins Kubernetes Role
+# Step-10. Create Jenkins Kubernetes Role
 
 ```bash
 kubectl exec -n vault -it vault-0 -- vault write auth/kubernetes/role/jenkins \
@@ -692,7 +692,7 @@ kubectl exec -n vault -it vault-0 -- vault write auth/kubernetes/role/jenkins \
   ttl=24h
 ```
 
-# Step-10. Verify Jenkins Role
+# Step-11. Verify Jenkins Role
 
 ```bash
 kubectl exec -n vault -it vault-0 -- vault read auth/kubernetes/role/jenkins
