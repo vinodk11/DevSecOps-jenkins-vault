@@ -272,14 +272,14 @@ Install the pulgins:
 * kubernetes 
 
 ---
-# Step 13: Now configure the pielpeine to provision EKS cluster
+# Step 15: Now configure the pielpeine to provision EKS cluster
 
 Configure the Jenkins Pipeline to Provision EKS Cluster
 Follow these structured steps to configure, parameterize, and execute your Jenkins pipeline using the provided repository to provision your Amazon EKS infrastructure.
 
 ![Alt text](content/16-51-05.png)
 ---
-# 13.1: General Settings & Log Rotation Configuration
+# 15.1: General Settings & Log Rotation Configuration
 From the Jenkins dashboard, navigate to your pipeline named Tools and click Configure in the left sidebar.
 
 Under the General tab, check the box for Discard old builds.
@@ -290,7 +290,7 @@ Leave Days to keep builds blank, and set Max # of builds to keep to 3. This prev
 
 ![Alt text](content/16-51-07.png)
 ---
-# 13.2: Pipeline Definition & SCM Configuration
+# 15.2: Pipeline Definition & SCM Configuration
 Scroll down to the Pipeline section.
 
 Change the Definition dropdown to Pipeline script from SCM.
@@ -303,7 +303,7 @@ Repository URL: <your Repository>
 
 Credentials: - none - (if it is a public repository)
 
-Branch Specifier: */master
+Branch Specifier: */main
 
 Set the Script Path to target your cluster directory: eks_cluster/Jenkinsfile.
 
@@ -313,7 +313,7 @@ Click Apply and then Save.
 ![Alt text](content/16-51-08.png)
 ---
 
-# 13.3: Initial Pipeline Landing Page
+# 15.3: Initial Pipeline Landing Page
 After saving, you will be redirected to the pipeline dashboard. Because the pipeline has just been configured from SCM and has not executed its first run yet, the Stage View will display a notice stating: "No data available. This Pipeline has not yet run."
 
 ![Alt text](content/16-51-09.png)
@@ -322,7 +322,7 @@ After saving, you will be redirected to the pipeline dashboard. Because the pipe
 
 💡 Note: The "Build with Parameters" option will appear on the left menu after Jenkins reads the Jenkinsfile during its initial run configuration evaluation.
 
-# 13.4: Triggering the Parameterized Build
+# 15.4: Triggering the Parameterized Build
 Click on Build with Parameters from the left-hand navigation panel.
 
 Define the execution parameters for your infrastructure deployment:
