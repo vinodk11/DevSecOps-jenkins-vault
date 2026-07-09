@@ -623,8 +623,9 @@ ca.crt="$(cat ca.crt)"
 kubectl exec -n vault -it vault-0 -- \
 vault kv get secret/kS8
 ```
+# Step-8. Create policy and copy 
 
-
+```bash
 cat <<EOF > jenkins-policy.hcl
 path "secret/data/jenkins" {
   capabilities = ["read"]
@@ -674,14 +675,14 @@ path "secret/metadata/ks8" {
   capabilities = ["read", "list"]
 }
 EOF
-
-
+```
+```bash
 kubectl cp jenkins-policy.hcl vault/vault-0:/tmp/
 
 kubectl exec -n vault -it vault-0 -- \
 vault policy write jenkins-policy /tmp/jenkins-policy.hcl
-
-Create Jenkins Kubernetes Role
+```
+# Step-9. Create Jenkins Kubernetes Role
 
 ```bash
 kubectl exec -n vault -it vault-0 -- vault write auth/kubernetes/role/jenkins \
@@ -691,7 +692,7 @@ kubectl exec -n vault -it vault-0 -- vault write auth/kubernetes/role/jenkins \
   ttl=24h
 ```
 
-# Step-8. Verify Jenkins Role
+# Step-10. Verify Jenkins Role
 
 ```bash
 kubectl exec -n vault -it vault-0 -- vault read auth/kubernetes/role/jenkins
