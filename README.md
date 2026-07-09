@@ -13,7 +13,7 @@ Instead of storing credentials inside Jenkins, **HashiCorp Vault** is used to se
 ---
 ## 📌 Architecture Flow:
 
-![Alt text](jenkins_server/content/16-51-15.png)
+![Alt text](jenkins_server/content/16-51-14.png)
 
 ## 🛠️ Tech Stack
 
