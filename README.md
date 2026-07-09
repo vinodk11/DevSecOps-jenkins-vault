@@ -1,56 +1,115 @@
+# 🚀 End-to-End DevSecOps CI/CD Pipeline on AWS EKS
 
-# DevSecOps-jenkins-vault
-Three-Tier Web Application Deployment on AWS EKS using EKS, vault, Prometheus, Grafana, and Jenkins as statefulset
+> A complete DevSecOps implementation that automates **Build → Scan → Secure → Deploy** using Jenkins, Vault, Kubernetes, and AWS.
+
+---
+
+## 📌 Workshop Overview
+
+This project demonstrates how to build a secure and automated CI/CD pipeline on **Amazon EKS** while following DevSecOps best practices.
+
+Instead of storing credentials inside Jenkins, **HashiCorp Vault** is used to securely manage secrets. Every code change automatically triggers a pipeline that builds, scans, pushes, updates Kubernetes manifests, and deploys the latest version to EKS.
+
+---
+## 📌 Architecture Flow:
+
+![Alt text](jenkins_server/content/16-51-15.png)
+
+## 🛠️ Tech Stack
+
+| Category               | Tools                              |
+| ---------------------- | ---------------------------------- |
+| ☁️ Cloud               | AWS, Amazon EKS                    |
+| ⚙️ CI/CD               | Jenkins                            |
+| 🔐 Secrets             | HashiCorp Vault                    |
+| 📦 Container           | Docker                             |
+| ☸️ Orchestration       | Kubernetes                         |
+| 🔍 Code Analysis       | SonarQube                          |
+| 🛡️ Security Scan       | Trivy                              |
+| 📚 Artifact Repository | Nexus Repository                   |
+| 🚪 Ingress             | AWS Load Balancer Controller (ALB) |
+| 📝 SCM                 | Git & GitHub                       |
+
+---
+
+## ⚡ Pipeline Workflow
+
+```text
+Developer
+    │
+    ▼
+GitHub Push
+    │
+    ▼
+Jenkins Pipeline
+    │
+    ├── 📥 Checkout Code
+    ├── 🔨 Build (Maven)
+    ├── 🔍 SonarQube Scan
+    ├── 🛡️ Trivy Scan
+    ├── 🐳 Build Docker Image
+    ├── 📤 Push to Docker Hub
+    ├── 🔐 Retrieve Secrets from Vault
+    ├── 📝 Update Kubernetes Manifest
+    └── 🚀 Deploy to Amazon EKS
+               │
+               ▼
+        AWS Application Load Balancer
+               │
+               ▼
+          Web Application
+```
+
+---
+
+## ✨ Key Features
+
+* 🚀 Automated CI/CD Pipeline
+* ☸️ Kubernetes Deployment on Amazon EKS
+* 🔐 Dynamic Secret Management using Vault
+* 🔍 Continuous Code Quality Analysis
+* 🛡️ Container Vulnerability Scanning
+* 🐳 Docker Image Automation
+* 📦 Nexus Artifact Repository
+* 🌐 ALB Ingress Configuration
+* 📈 Production-style DevSecOps Workflow
+
+---
+
+## 📋 Prerequisites
+
+| Requirement    | Description                     |
+| -------------- | ------------------------------- |
+| ☁️ AWS Account | For EKS and cloud resources     |
+| 🐳 Docker      | Build container images          |
+| ☸️ Kubernetes  | EKS Cluster                     |
+| 🔧 kubectl     | Kubernetes CLI                  |
+| 📦 Helm        | Install Kubernetes applications |
+| 🏗️ Terraform   | Infrastructure provisioning     |
+| 💻 Jenkins     | CI/CD Automation                |
+| 🔐 Vault       | Secret Management               |
+| 📚 GitHub      | Source Code Repository          |
+
+---
 
 
 
+## 🎯 What You'll Learn
 
+✅ Build secure CI/CD pipelines
 
+✅ Deploy applications to Amazon EKS
 
-DevSecOps-jenkins-vault/
-├── LICENSE
-├── README.md
-├── eks_cluster
-│   ├── Jenkinsfile
-│   ├── README.md
-│   ├── alb_controller.tf
-│   ├── backend. 
-│   ├── ebs_csi_role.tf
-│   ├── eks_cluster.tf
-│   ├── eks_node_group.tf
-│   ├── eks_node_grp_sg.tf
-│   ├── iam_auth.tf
-│   ├── iam_policy_alb.json
-│   ├── oidc_provider.tf
-│   ├── provider.tf
-│   └── variables.tf
-├── jenkins_server
-│   ├── README.md
-│   ├── iam_ec2_admin.tf
-│   ├── install_script.sh
-│   ├── w2-SG.tf
-│   ├── w2-data-source.tf
-│   ├── w2-ec2.tf
-│   ├── w2-output.tf
-│   ├── w2-provider.tf
-│   └── w2-varibales.tf
-└── jenkins_vault
-    ├── Jenkinsfile
-    ├── jenkins_stateful_set
-    │   ├── ingress.yaml
-    │   ├── name_space.yaml
-    │   ├── service.yaml
-    │   ├── service_account.yaml
-    │   ├── statefulset.yaml
-    │   └── storage_class.yaml
-    └── vault
-        ├── ingress.yaml
-        ├── name_space.yaml
-        ├── pvc.yaml
-        ├── service.yaml
-        ├── serviceaccount.yaml
-        └── stateful_set.
+✅ Integrate Jenkins with Kubernetes
 
+✅ Secure credentials using Vault
 
+✅ Scan code using SonarQube
 
+✅ Scan images using Trivy
 
+✅ Deploy applications automatically
+
+✅ Configure AWS ALB Ingress
+
+✅ Troubleshoot real-world DevSecOps issues

@@ -264,12 +264,12 @@ Grab the intial pessword from  "tail -f /var/log/user-data.log" and complete the
 ![Alt text](content/16-51-04.png)
 
 Install the pulgins:
--> docker 
--> terrafrom
--> pipeline stage view 
--> kube cli
--> kubernetes credentials provider 
--> kubernetes 
+* docker 
+* terrafrom
+* pipeline stage view 
+* kube cli
+* kubernetes credentials provider 
+* kubernetes 
 
 ---
 # Step 13: Now configure the pielpeine to provision EKS cluster
