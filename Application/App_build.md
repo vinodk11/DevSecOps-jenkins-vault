@@ -1,4 +1,4 @@
-🚀 Configure Jenkins for Application CI/CD
+🚀 Configure Jenkins & Pipeline for Application CI/CD
 
 With the DevOps platform successfully deployed, the next step is configuring Jenkins to build, scan, package, and deploy applications using Kubernetes-based agents and securely managed secrets.
 
