@@ -71,13 +71,14 @@ Then configure **Log Rotation**:
 > 💡 **Why Log Rotation?**
 >
 > Log rotation automatically removes old build history, reducing disk usage and keeping Jenkins clean and efficient.
-
+![Alt text](content/16-51-07.png)
 ---
 
 # 🔧 Pipeline Configuration
 
 Scroll to the **Pipeline** section and configure the following:
-
+Change the Definition dropdown to "pipeline script form SCM". 
+ 
 | ⚙️ Field             | 📝 Value                       |
 | -------------------- | ------------------------------ |
 | Definition           | **Pipeline script from SCM**   |
@@ -87,6 +88,8 @@ Scroll to the **Pipeline** section and configure the following:
 | Branch               | `*/main`                       |
 | Script Path          | `tools/Jenkinsfile`            |
 | Lightweight Checkout | ✅ Enabled                      |
+
+![Alt text](content/16-51-08.png)
 
 After completing the configuration:
 
@@ -101,7 +104,7 @@ After saving the pipeline:
 
 1. Open the pipeline dashboard.
 2. Click **▶️ Build Now**
-
+![Alt text](content/16-51-09.png)
 Jenkins immediately starts the deployment.
 
 Since this is a **standard pipeline**, no parameters are required.
@@ -161,7 +164,7 @@ Expected Output
 * ✅ Jenkins Pod is **Running**
 * ✅ Jenkins Service is created
 * ✅ Jenkins StatefulSet is **Ready (1/1)**
-
+![Alt text](content/16-51-18.png)
 ---
 
 ### 🔐 HashiCorp Vault
@@ -179,7 +182,7 @@ Expected Output
 > **Note**
 >
 > During the initial deployment, the Vault pods will show **0/1 Ready** because Vault has not yet been initialized and unsealed. This is expected behavior and will be completed in the next section.
-
+![Alt text](content/16-51-19.png)
 ---
 
 ### 🔍 SonarQube
@@ -193,7 +196,7 @@ Expected Output
 * ✅ SonarQube Pod is Running
 * ✅ PostgreSQL Pod is Running
 * ✅ Services are available
-
+![Alt text](content/16-51-20.png)
 ---
 
 ### 📦 Nexus Repository
@@ -206,7 +209,7 @@ Expected Output
 
 * ✅ Nexus Pod is Running
 * ✅ Nexus Service is available
-
+![Alt text](content/16-51-21.png)
 ---
 
 # 🌐 Step 2: Verify the Ingress Resources
@@ -237,13 +240,13 @@ Retrieve the ALB DNS name from any Ingress.
 ```bash
 kubectl get ingress -n jenkins
 ```
-
+![Alt text](content/16-51-22.png)
 Example:
 
 ```text
 k8s-devopstools-fa1a4e5e31-916181027.us-east-1.elb.amazonaws.com
 ```
-
+![Alt text](content/16-51-23.png)
 Resolve the DNS name to its public IP.
 
 ```bash
@@ -255,7 +258,7 @@ Example Output
 ```text
 50.16.xxx.xxx
 ```
-
+![Alt text](content/16-51-24.png)
 ---
 
 # 🖥️ Step 4: Update the Hosts File
@@ -281,7 +284,7 @@ Add the following entries:
 ```
 
 Save the file.
-
+![Alt text](content/16-51-25.png)
 ---
 
 # 🚀 Step 5: Access the DevSecOps Platform
@@ -305,7 +308,6 @@ Retrieve the initial administrator password.
 kubectl exec -it jenkins-0 -n jenkins -- \
 cat /var/jenkins_home/secrets/initialAdminPassword
 ```
-
 Copy the generated password.
 
 Open:
@@ -316,6 +318,7 @@ http://jenkins.local
 
 Paste the password and click **Continue**.
 
+![Alt text](content/16-51-26.png)
 ---
 
 # 🔧 Configure SonarQube & Nexus Repository
@@ -347,7 +350,7 @@ Use the default credentials:
 On your first login, SonarQube prompts you to change the default administrator password.
 
 Choose a strong password and click **Update Credentials**.
-
+![Alt text](content/16-51-27.png)
 ---
 
 ## Step 3: Generate a User Token
@@ -359,41 +362,34 @@ Navigate to:
 **Administration → Security → Users**
 
 Click the **Tokens** icon for the **admin** user.
+![Alt text](content/16-51-28.png)
 
 Enter:
-
+```text
 | Field      | Value           |
 | ---------- | --------------- |
 | Token Name | `jenkins-token` |
-
+```
+![Alt text](content/16-51-29.png)
 Click **Generate**.
-
 > ⚠️ **Important**
->
 > Copy the generated token immediately. SonarQube displays it only once.
-
 Example:
 
 ```text
 sqp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
-
+![Alt text](content/16-51-30.png)
 Store this token securely. It will be added to **HashiCorp Vault** in a later step.
-
 ---
-
 # 📦 Configure Nexus Repository
-
 ## Step 1: Access Nexus
-
 Open:
 
 ```text
 http://nexus.local
 ```
-
 ---
-
 ## Step 2: Retrieve the Initial Admin Password
 
 Run the following command:
@@ -402,15 +398,13 @@ Run the following command:
 kubectl exec -it deployment/nexus -n nexus -- \
 cat /nexus-data/admin.password
 ```
-
 Example Output
 
 ```text
-3d4c7f18-8b59-4fd2-8b5c-xxxxxxxxxxxx
+3d4c7f18-xxxx-xxxx-xxxxx-xxxxxxxxxxxx
 ```
-
 Copy the password.
-
+![Alt text](content/16-51-31.png)
 ---
 
 ## Step 3: Login
@@ -431,7 +425,7 @@ After logging in, Nexus prompts you to update the administrator password.
 2. Enter a new password.
 3. Confirm the new password.
 4. Click **Next**.
-
+![Alt text](content/16-51-32.png)
 ---
 
 ## Step 5: Disable Anonymous Access (Recommended)
@@ -472,7 +466,8 @@ Jenkins retrieves these secrets dynamically during pipeline execution, eliminati
 ```bash
 kubectl exec -it vault-0 -n vault -- vault operator init
 ```
-This generates:
+This generates FIve keys and a ROOT Token:
+use any three keys and unseal vault.
 Example:
 
 ```text

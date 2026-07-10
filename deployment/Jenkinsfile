@@ -71,7 +71,7 @@ spec:
                                 --server="$KUBE_SERVER" \
                                 --token="$KUBE_TOKEN" \
                                 --certificate-authority=ca.crt \
-                                apply -f bank_app/
+                                apply -f Application/
                         '''
                     }
                 }
