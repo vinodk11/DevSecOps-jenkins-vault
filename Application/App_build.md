@@ -76,7 +76,7 @@ Server:URL	http://sonarqube.sonarqube:9000
 --------------------------------------------
 Authentication Token	None
 ```
-![Alt text](content/16-51-33.png)
+![Alt text](jenkins_server/content/16-51-33.png)
 ---
 Configure HashiCorp Vault
 
@@ -88,6 +88,7 @@ Manage Jenkins
 → HashiCorp Vault
 ```
 Configure the following:
+
 ![Alt text](content/16-51-34.png)
 
 ```bash
@@ -97,7 +98,9 @@ Configure the following:
 | Credential        | vault-k8s                                          |
 | KV Engine Version | 2                                                  |
 ```
+
 ![Alt text](content/16-51-35.png)
+
 Create Vault Kubernetes Credential
 
 Go to:
