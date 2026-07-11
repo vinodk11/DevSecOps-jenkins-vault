@@ -212,27 +212,6 @@ Then configure **Log Rotation**:
 ![Alt text](../content/16-51-07.png)
 ---
 
-⚙️ Click **Configure**
-
-# 🗂️ General Settings
-
-Under **General**, enable:
-
-* ✅ Discard old builds
-
-Then configure **Log Rotation**:
-
-| Setting                 | Value       |
-| ----------------------- | ----------- |
-| 🗓️ Days to keep builds | Leave Blank |
-| 📦 Max builds to keep   | **3**       |
-
-> 💡 **Why Log Rotation?**
->
-> Log rotation automatically removes old build history, reducing disk usage and keeping Jenkins clean and efficient.
-![Alt text](../content/16-51-07.png)
----
-
 # 🔧 Pipeline Configuration
 
 Scroll to the **Pipeline** section and configure the following:
@@ -245,8 +224,8 @@ Change the Definition dropdown to "pipeline script form SCM".
 | Repository URL       | `<YOUR_GITHUB_REPOSITORY>`     |
 | Credentials          | **None** *(Public Repository)* |
 | Branch               | `*/main`                       |
-| Script Path          | `Application/Jenkinsfile`            |
-| Lightweight Checkout | ✅ Enabled                      |
+| Script Path          | `Application/Jenkinsfile`      |
+| Lightweight Checkout | ✅ Enabled                     |
 
 ![Alt text](../content/16-51-08.png)
 

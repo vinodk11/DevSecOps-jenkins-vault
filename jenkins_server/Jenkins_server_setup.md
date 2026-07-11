@@ -210,6 +210,7 @@ tail -f  /var/log/user-data.log
 Complete the intail setup of jenkins 
 Grab the intial pessword from  "tail -f /var/log/user-data.log" and complete the intail setup.  
 ![Alt text](../content/16-51-04.png)
+---
 Install the pulgins:
 * docker 
 * terrafrom
@@ -221,8 +222,27 @@ Install the pulgins:
 # Step 15: Now configure the pielpeine to provision EKS cluster
 Configure the Jenkins Pipeline to Provision EKS Cluster
 Follow these structured steps to configure, parameterize, and execute your Jenkins pipeline using the provided repository to provision your Amazon EKS infrastructure.
-![Alt text](../content/16-51-05.png)
+
 ---
+From the **Jenkins Dashboard**:
+
+From the Jenkins Dashboard:
+
+📂 **New Item**
+
+Enter the name:
+```text
+tools-deployment-pipeline
+```
+Select
+
+```text
+Pipeline
+```
+Click **OK**
+
+![Alt text](../content/16-51-05.png)
+
 # 15.1: General Settings & Log Rotation Configuration
 From the Jenkins dashboard, navigate to your pipeline named Tools and click Configure in the left sidebar.
 
@@ -234,27 +254,24 @@ Leave Days to keep builds blank, and set Max # of builds to keep to 3. This prev
 
 ![Alt text](../content/16-51-07.png)
 ---
-# 15.2: Pipeline Definition & SCM Configuration
-Scroll down to the Pipeline section.
+# 15.2: 🔧 Pipeline Definition & SCM Configuration
+ 
+Scroll to the **Pipeline** section and configure the following:
+Change the Definition dropdown to "pipeline script form SCM". 
+ 
+| ⚙️ Field             | 📝 Value                       |
+| -------------------- | ------------------------------ |
+| Definition           | **Pipeline script from SCM**   |
+| SCM                  | **Git**                        |
+| Repository URL       | `<YOUR_GITHUB_REPOSITORY>`     |
+| Credentials          | **None** *(Public Repository)* |
+| Branch               | `*/main`                       |
+| Script Path          | `tools/Jenkinsfile`            |
+| Lightweight Checkout | ✅ Enabled                     |
 
-Change the Definition dropdown to Pipeline script from SCM.
-
-Set the SCM dropdown to Git.
-
-Input your source code details exactly as shown below:
-
-Repository URL: <your Repository>
-
-Credentials: - none - (if it is a public repository)
-
-Branch Specifier: */main
-
-Set the Script Path to target your cluster directory: eks_cluster/Jenkinsfile.
-
-Ensure Lightweight checkout is checked.
+![Alt text](../content/16-51-08.png)
 
 Click Apply and then Save.
-![Alt text](../content/16-51-08.png)
 ---
 
 # 15.3: Initial Pipeline Landing Page

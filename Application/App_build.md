@@ -1,4 +1,4 @@
-🚀 Configure Jenkins & Pipeline for BuildingApplication  CI/CD
+🚀 Configure Jenkins & Pipeline for Building Application CI/CD
 
 With the DevOps platform successfully deployed, the next step is configuring Jenkins to build, scan, package, and deploy applications using Kubernetes-based agents and securely managed secrets.
 
@@ -122,12 +122,12 @@ Manage Jenkins
 Configure:
 ![Alt text](../content/16-51-36.png)
 
-| Field | Value |
-|---|---|
-| Kind | Vault Kubernetes Credential |
-| Role | jenkins |
-| Mount Path | kubernetes |
-| ID | vault-k8s |
+| Field      |          Value              |
+|------------|-----------------------------|
+| Kind       | Vault Kubernetes Credential |
+| Role       | jenkins                     |
+| Mount Path | kubernetes                  |
+| ID         | vault-k8s                   |
 
 Namespace field: Leave EMPTY.
 
@@ -174,11 +174,12 @@ Use the below snipet this cantians username and password as variables which crea
 This allows Maven builds to download dependencies and publish artifacts directly to Nexus Repository Manager.
 Click Submit.
 
-make sure this below nexus Ulrs: same as in the image
-<url>http://nexus.nexus:8081/repository/maven-releases/</url>
-<url>http://nexus.nexus:8081/repository/maven-snapshots/</url>
+make sure this below nexus Ulrs: same as in the image in POM.xml file ![Alt text](../Application/pom.xml)
 
 ![Alt text](../content/16-51-40.png)
+
+<url>http://nexus.nexus:8081/repository/maven-releases/</url>
+<url>http://nexus.nexus:8081/repository/maven-snapshots/</url>
 
 ---
 
