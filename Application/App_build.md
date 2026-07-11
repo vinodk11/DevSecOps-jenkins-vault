@@ -1,8 +1,8 @@
-🚀 Configure Jenkins & Pipeline for Application CI/CD
+🚀 Configure Jenkins & Pipeline for BuildingApplication  CI/CD
 
 With the DevOps platform successfully deployed, the next step is configuring Jenkins to build, scan, package, and deploy applications using Kubernetes-based agents and securely managed secrets.
 
-In this section, you'll integrate Jenkins with SonarQube, HashiCorp Vault, Kubernetes, and Maven, then verify the setup by running test pipelines before building the complete application CI/CD pipeline.
+In this section, you'll integrate Jenkins with SonarQube, HashiCorp Vault, Kubernetes, and Maven, then verify the setup by running test pipelines before building the complete application CI/CD pipeline on jenkins as statefulset.
 
 📌 What You'll Configure
 
@@ -14,6 +14,12 @@ In this section, you'll integrate Jenkins with SonarQube, HashiCorp Vault, Kuber
 | 🧪 15.4 | Validate Kubernetes Cloud                |
 | 🔐 15.5 | Validate Vault Integration               |
 | 🚀 15.6 | Configure the Application Build Pipeline |
+
+Open your browser and navigate to:
+```text
+http://jenkins.local
+```
+and login 
 
 ---
 🔌 Install Required Jenkins Plugins
@@ -76,7 +82,7 @@ Server:URL	http://sonarqube.sonarqube:9000
 --------------------------------------------
 Authentication Token	None
 ```
-![Alt text](jenkins_server/content/16-51-33.png)
+![Alt text](../content/16-51-33.png)
 ---
 Configure HashiCorp Vault
 
@@ -89,7 +95,7 @@ Manage Jenkins
 ```
 Configure the following:
 
-![Alt text](content/16-51-34.png)
+![Alt text](../content/16-51-34.png)
 
 ```bash
 | Field             | Value                                              |
@@ -99,7 +105,7 @@ Configure the following:
 | KV Engine Version | 2                                                  |
 ```
 
-![Alt text](content/16-51-35.png)
+![Alt text](../content/16-51-35.png)
 
 Create Vault Kubernetes Credential
 
@@ -114,7 +120,7 @@ Manage Jenkins
 ```
 
 Configure:
-![Alt text](content/16-51-36.png)
+![Alt text](../content/16-51-36.png)
 
 | Field | Value |
 |---|---|
@@ -138,11 +144,11 @@ Manage Jenkins
     ↓
 Managed Files
 ```
-![Alt text](content/16-51-37.png)
+![Alt text](../content/16-51-37.png)
 
 Create a new Global Maven settings.xml configuration.
 
-![Alt text](content/16-51-38.png)
+![Alt text](../content/16-51-38.png)
 
 Upload or paste the customized settings.xml file containing the Nexus repository configuration.
 
@@ -163,7 +169,7 @@ Use the below snipet this cantians username and password as variables which crea
      <password>${NEXUS_PASS}</password>
    </server>	
 ```
-![Alt text](content/16-51-39.png)
+![Alt text](../content/16-51-39.png)
 
 This allows Maven builds to download dependencies and publish artifacts directly to Nexus Repository Manager.
 Click Submit.
@@ -172,7 +178,7 @@ make sure this below nexus Ulrs: same as in the image
 <url>http://nexus.nexus:8081/repository/maven-releases/</url>
 <url>http://nexus.nexus:8081/repository/maven-snapshots/</url>
 
-![Alt text](content/16-51-40.png)
+![Alt text](../content/16-51-40.png)
 
 ---
 
@@ -189,17 +195,18 @@ Clouds
     ↓
 New Cloud
 ```
-![Alt text](content/16-51-41.png)
-![Alt text](content/16-51-42.png)
+![Alt text](../content/16-51-41.png)
+
+![Alt text](../content/16-51-42.png)
 
 Select
 ```text
 Kubernetes
 ```
-![Alt text](content/16-51-43.png)
+![Alt text](../content/16-51-43.png)
 
 Configure the following.
-![Alt text](content/16-51-44.png)
+![Alt text](../content/16-51-44.png)
 Click Test Connection.
 
 You should see a successful connection message indicating Jenkins can communicate with the Kubernetes API.
@@ -213,9 +220,9 @@ You should see a successful connection message indicating Jenkins can communicat
 | Credentials          | Jenkins ServiceAccount                                                                         |
 | WebSocket            | Enabled                                                                                      |
 ```
-![Alt text](content/16-51-45.png)
+![Alt text](../content/16-51-45.png)
 
-![Alt text](content/16-51-46.png)
+![Alt text](../content/16-51-46.png)
 
 Create a Default Pod Template
 
@@ -226,7 +233,7 @@ Pod Templates
     ↓
 Add Pod Template
 ```
-![Alt text](content/16-51-47.png)
+![Alt text](../content/16-51-47.png)
 
 | Field             | Value                              |
 | ----------------- | ---------------------------------- |
@@ -239,10 +246,12 @@ Add Pod Template
 | Working Directory | /home/jenkins/agent                |
 | Run As User       | 1000                               |
 | Run As Group      | 1000                               |
-| Workspace Volume  | EmptyDir                           |
-![Alt text](content/16-51-48.png)
-![Alt text](content/16-51-49.png)
-![Alt text](content/16-51-50.png)
+| Workspace Volume  | EmptyDir 
+                          |
+![Alt text](../content/16-51-48.png)
+![Alt text](../content/16-51-49.png)
+![Alt text](../content/16-51-50.png)
+
 Click Create.
 
 🧪 Validate the Kubernetes Cloud
@@ -389,6 +398,52 @@ Now let's build theApplication pipeline will perform the following stages:
 
 ---
 
+From the **Jenkins Dashboard**:
+
+📂 Create Pipeline **Application-Build-pipeline**
+📂 Open **Application-Build-pipeline**
+⚙️ Click **Configure**
+
+# 🗂️ General Settings
+
+Under **General**, enable:
+
+* ✅ Discard old builds
+
+Then configure **Log Rotation**:
+
+| Setting                 | Value       |
+| ----------------------- | ----------- |
+| 🗓️ Days to keep builds | Leave Blank |
+| 📦 Max builds to keep   | **3**       |
+
+> 💡 **Why Log Rotation?**
+>
+> Log rotation automatically removes old build history, reducing disk usage and keeping Jenkins clean and efficient.
+![Alt text](../content/16-51-07.png)
+---
+
+⚙️ Click **Configure**
+
+# 🗂️ General Settings
+
+Under **General**, enable:
+
+* ✅ Discard old builds
+
+Then configure **Log Rotation**:
+
+| Setting                 | Value       |
+| ----------------------- | ----------- |
+| 🗓️ Days to keep builds | Leave Blank |
+| 📦 Max builds to keep   | **3**       |
+
+> 💡 **Why Log Rotation?**
+>
+> Log rotation automatically removes old build history, reducing disk usage and keeping Jenkins clean and efficient.
+![Alt text](../content/16-51-07.png)
+---
+
 # 🔧 Pipeline Configuration
 
 Scroll to the **Pipeline** section and configure the following:
@@ -404,7 +459,7 @@ Change the Definition dropdown to "pipeline script form SCM".
 | Script Path          | `Application/Jenkinsfile`            |
 | Lightweight Checkout | ✅ Enabled                      |
 
-![Alt text](content/16-51-08.png)
+![Alt text](../content/16-51-08.png)
 
 After completing the configuration:
 
@@ -412,17 +467,4 @@ After completing the configuration:
 * 💾 Click **Save**
 
 ---
-Verify the Application is deployed successfully 
-```bash
-kubectl get -n webapps all
-```
-As shown below:
-![Alt text](content/16-51-51.png)
-
-Add add the bankapp ingress to the /etc/hosts 
-![Alt text](content/16-51-52.png)
-
-Note: To access the Application repeate the same procces as did earlier for Accessing  jenkins UI.
----
-
 🎉 At the end of this section, Jenkins will be fully configured to build applications using Kubernetes agents while securely retrieving all required credentials from HashiCorp Vault, completing the CI portion of the DevSecOps workflow. 

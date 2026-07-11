@@ -1,5 +1,7 @@
 # 🚀 Configure the Jenkins Pipeline to Deploy DevSecOps Tools
 
+![Alt text](../content/16-51-53.png)
+
 This pipeline automates the deployment of the complete **DevSecOps platform** on Amazon EKS.
 
 ## 🏗️ DevSecOps Components Deployed
@@ -12,13 +14,20 @@ This pipeline automates the deployment of the complete **DevSecOps platform** on
 | 🔐 HashiCorp Vault  | Secrets Management      |
 
 ---
+# 🔧 Add the Kubeconfig to jenkins server and check weather jenkins server is cummunicating with eks cluster 
 
+```text
+aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster
+Added new context arn:aws:eks:us-east-1:165772574557:cluster/my-eks-cluster to /home/ubuntu/.kube/config
+ubuntu@ip-172-31-24-148:~$ kubectl get nodes 
+NAME                            STATUS   ROLES    AGE     VERSION
+ip-172-31-14-213.ec2.internal   Ready    <none>   5m50s   v1.30.14-eks-ecaa3a6
+ip-172-31-43-51.ec2.internal    Ready    <none>   5m17s   v1.30.14-eks-ecaa3a6
+ip-172-31-90-18.ec2.internal    Ready    <none>   5m51s   v1.30.14-eks-ecaa3a6
+```
 # 🔑 Create Jenkins Service Account
-
 Before configuring the deployment pipeline, create a dedicated **Jenkins ServiceAccount** with the required Kubernetes permissions.
-
 ### 📄 What does this script do?
-
 The **`jenkins-sa.sh`** script automatically creates:
 
 * 📁 Jenkins Namespace
@@ -44,6 +53,55 @@ chmod +x jenkins-sa.sh
 ./jenkins-sa.sh
 ```
 
+Expected as below 
+
+```text
+ubuntu@ip-172-31-24-148:~$ chmod u+x jenkins.sh 
+
+ubuntu@ip-172-31-24-148:~$ ./jenkins.sh 
+namespace/jenkins created
+serviceaccount/jenkins created
+clusterrole.rbac.authorization.k8s.io/jenkins-cluster-role created
+clusterrolebinding.rbac.authorization.k8s.io/jenkins-cluster-role-binding created
+Jenkins ServiceAccount created in namespace 'jenkins'
+Token saved to jenkins_token.txt
+```
+---
+
+📌 Add the Token to Jenkins Credentials
+
+Grab the token from the path "jenkins-sa/jenkins_token.txt" which was create by the script: "jenkins.sh"  earlier.
+
+```text
+ubuntu@ip-172-31-24-148:~$ cat jenkins-sa/jenkins_token.txt
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ip-172-31-24-148:~$ 
+```
+![Alt text](../content/16-51-54.png)
+
+```text
+Manage Jenkins
+    ↓
+Credentials
+    ↓
+System
+    ↓
+Global credentials (unrestricted)
+    ↓
+Add Credentials
+```
+
+```text
+-----------------------------------------------------------
+| Field       | Value                                     |
+| ----------- | ----------------------------------------- |
+| Kind        | **Secret text**                           |
+| Scope       | **Global**                                |
+| Secret text | *Paste the Jenkins ServiceAccount token*  |
+| ID          | `kube-config`                             |
+| Description | `Jenkins Kubernetes ServiceAccount Token` |
+-----------------------------------------------------------
+```
 ---
 
 # ⚙️ Configure the Jenkins Pipeline
@@ -52,8 +110,6 @@ From the **Jenkins Dashboard**:
 
 1. 📂 Open **tools-deployment-pipeline**
 2. ⚙️ Click **Configure**
-
----
 
 # 🗂️ General Settings
 
@@ -75,7 +131,6 @@ Then configure **Log Rotation**:
 ---
 
 # 🔧 Pipeline Configuration
-
 Scroll to the **Pipeline** section and configure the following:
 Change the Definition dropdown to "pipeline script form SCM". 
  
@@ -87,7 +142,7 @@ Change the Definition dropdown to "pipeline script form SCM".
 | Credentials          | **None** *(Public Repository)* |
 | Branch               | `*/main`                       |
 | Script Path          | `tools/Jenkinsfile`            |
-| Lightweight Checkout | ✅ Enabled                      |
+| Lightweight Checkout | ✅ Enabled                     |
 
 ![Alt text](../content/16-51-08.png)
 
@@ -96,6 +151,31 @@ After completing the configuration:
 * 💾 Click **Apply**
 * 💾 Click **Save**
 
+> [!NOTE]
+Edit pipeline as shown in the below add your <your server ulr>: in all the stages.
+
+```text
+stage('Setup Kubeconfig') {
+            steps {
+                withKubeCredentials(
+                    kubectlCredentials: [
+                        [
+                            caCertificate: '',
+                            clusterName: 'my-eks-cluster',
+                            contextName: 'jenkins-context',
+                            credentialsId: 'kube-config',
+                            namespace: 'jenkins',
+                            serverUrl: '<you-server-Ulr>'
+                        ]
+                    ]
+                ) {
+                    sh 'kubectl version --client'
+                    sh 'kubectl get nodes'
+                }
+            }
+        }
+
+```
 ---
 
 # 🚀 Trigger the Pipeline
@@ -222,14 +302,14 @@ kubectl get ingress -A
 ```
 
 Expected Output
-
+-------------------------------
 | Namespace | Host            |
 | --------- | --------------- |
 | jenkins   | jenkins.local   |
 | vault     | vault.local     |
 | sonarqube | sonarqube.local |
 | nexus     | nexus.local     |
-
+-------------------------------
 Each Ingress should display the **same ALB DNS name**, confirming that the AWS Load Balancer Controller has grouped them into a single ALB.
 
 ---
@@ -247,7 +327,7 @@ Example:
 ```text
 k8s-devopstools-fa1a4e5e31-916181027.us-east-1.elb.amazonaws.com
 ```
-![Alt text](../content/16-51-23.png)
+
 Resolve the DNS name to its public IP.
 
 ```bash
@@ -283,9 +363,10 @@ Add the following entries:
 50.16.xxx.xxx    nexus.local
 
 ```
+![Alt text](../content/16-51-25.png)
 
 Save the file.
-![Alt text](../content/16-51-25.png)
+
 ---
 
 # 🚀 Step 5: Access the DevSecOps Platform
@@ -309,18 +390,32 @@ Retrieve the initial administrator password.
 kubectl exec -it jenkins-0 -n jenkins -- \
 cat /var/jenkins_home/secrets/initialAdminPassword
 ```
+![Alt text](../content/16-51-26.png)
+
 Copy the generated password.
 
-Open:
+Open your browser and navigate to:
 
 ```text
 http://jenkins.local
 ```
-
 Paste the password and click **Continue**.
 
-![Alt text](../content/16-51-26.png)
----
+Clik on the Suggested Plugins and Continue to
+
+👤 Create the First Administrator User
+
+Provide the following details:
+-------------------------------------------------------
+| Field     | Value                                   |
+| --------- | --------------------------------------- |
+| Username  | admin                                   |
+| Password  | ********                                |
+| Full Name | Your Name                               |
+| Email     | [your@email.com](mailto:your@email.com) |
+-------------------------------------------------------
+
+For now let  be and will configure the remaining part befor deploying the Application.
 
 # 🔧 Configure SonarQube & Nexus Repository
 
@@ -471,6 +566,8 @@ This generates FIve keys and a ROOT Token:
 use any three keys and unseal vault.
 Example:
 
+![Alt text](../content/16-51-55.png)
+
 ```text
 Unseal Key 1: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Unseal Key 2: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -490,6 +587,9 @@ kubectl exec -n vault -it vault-0 -- vault operator unseal <KEY_1>
 kubectl exec -n vault -it vault-0 -- vault operator unseal <KEY_2>
 kubectl exec -n vault -it vault-0 -- vault operator unseal <KEY_3>
 ```
+After unleasing vault-0 with all three keys you will able see to as the below 
+
+![Alt text](../content/16-51-56.png)
 ---
 ## Unseal vault-1
 
@@ -620,7 +720,7 @@ ca.crt="$(cat ca.crt)"
 kubectl exec -n vault -it vault-0 -- \
 vault kv get secret/kS8
 ```
-# Step-9. Create policy and copy 
+# Step-9. Create the policy and copy  
 
 ```bash
 cat <<EOF > jenkins-policy.hcl
@@ -700,10 +800,26 @@ Verify Jenkins Service Account
 ```bash
 kubectl describe pod jenkins-0 -n jenkins | grep -i "Service Account"
 ```
-
 Expected:
 
 ```text
 Service Account: jenkins
+```
+
+At this stage What Configurations is we have completed is:
 
 
+✅ Jenkins Kubernetes role created
+✅ Jenkins ServiceAccount verified
+✅ SonarQube Administrator Account
+✅ SonarQube User Token
+✅ Nexus Administrator Password
+✅ Vault initialized
+✅ Vault unsealed
+✅ HA cluster healthy
+✅ Kubernetes authentication enabled
+✅ KV v2 secrets engine enabled
+✅ All required secrets stored
+✅ Jenkins policy created
+
+Vault is now fully configured and ready to provide secrets securely to the Jenkins pipelines.
